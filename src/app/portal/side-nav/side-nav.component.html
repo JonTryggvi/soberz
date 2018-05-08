@@ -1,0 +1,17 @@
+<mat-sidenav-container class="sidenav-container" >
+  <mat-sidenav #sidenav mode="side" [(opened)]="opened" class="sidenav" role="navigation">
+    Sidenav content
+    <button mat-button (click)="logOut()">logout</button>
+    <a routerLink="/portal/user-profile/{{userId}}">user profile</a>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <button class="btnMenu" mat-fab color="primary" (click)="sidenav.toggle()"><mat-icon aria-label="">more_vert</mat-icon></button>
+    <div class="portal-view">
+      
+      <router-outlet ></router-outlet>
+      
+    </div>
+    
+  </mat-sidenav-content>
+</mat-sidenav-container>

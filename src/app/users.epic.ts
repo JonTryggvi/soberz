@@ -1,0 +1,81 @@
+import { Injectable } from "@angular/core";
+import { ActionsObservable } from "redux-observable";
+import { Observable } from "rxjs/Observable";
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
+import { AuthService } from "./auth.service";
+import { UsersActions } from "./users.actions";
+import { UsersService } from "./users.service";
+
+
+@Injectable()
+export class UsersEpic { 
+  constructor(private userServise: UsersService, private authServise: AuthService) { }
+
+  saveUser = (action$: ActionsObservable<any>) => {
+    return action$.ofType(UsersActions.SAVE_USER)
+      .mergeMap(({payload}) => {
+        console.log(payload);
+        
+        return this.userServise.saveUser(payload)
+          .map((result) => ({
+            type: UsersActions.SAVE_USER_SUCCESS,
+            payload: result
+          }))
+          .catch(error => Observable.of({
+            type: UsersActions.GET_ALL_USERS_ERROR,
+            payload: error
+          }));
+      });
+  }
+
+  getAllUsers = (action$: ActionsObservable<any>) => {
+    return action$.ofType(UsersActions.GET_ALL_USERS)
+      .mergeMap(({ payload }) => {
+        return this.userServise.getAllUsersApi(payload)
+          .map((result: any[]) => ({
+            type: UsersActions.GET_ALL_USERS_SUCCESS,
+            payload: result
+          }))
+          .catch(error => Observable.of({
+            type: UsersActions.GET_ALL_USERS_ERROR,
+            payload: error
+          }));
+      });
+  }
+
+  validateUser = (action$: ActionsObservable<any>) => {
+    return action$.ofType(UsersActions.LOG_IN)
+      .mergeMap(({ payload }) => {
+        return this.authServise.authServiselogIn(payload)
+          .map((result) => ({
+            type: UsersActions.LOG_IN_SUCCESS,
+            payload: result
+          }))
+          .catch(error => Observable.of({
+            type: UsersActions.LOG_IN_FAILED,
+            payload: error
+          }));
+      });
+  }
+
+  checkForToken = (action$: ActionsObservable<any>) => {
+    return action$.ofType(UsersActions.CHECK_TOKEN)
+      .mergeMap(({ payload }) => {
+        console.log(payload);
+        
+        return this.userServise.usCheckToken(payload[0], payload[1] )
+      .map((result) => ({
+          type: UsersActions.CHECK_TOKEN_VALID,
+          payload: result
+        }))
+          .catch(error => Observable.of({
+            type: UsersActions.CHECK_TOKEN_INVALID,
+            payload: error
+          }));
+      });
+  }
+
+}

@@ -1,0 +1,46 @@
+section {
+  width: 100%;
+  justify-content: center;
+}
+div {
+  display: flex;
+  flex-flow: column;
+  width: 20%;
+  height: 100px;
+  align-items: center;
+  justify-content: space-evenly;
+  
+  h1 {
+    margin: 0;
+    text-transform: uppercase;
+  }
+}
+form {
+  display: flex;
+  flex-direction: row;
+  columns: 2;
+  width:90%;
+  max-height: 95vh;
+  justify-content: space-around;
+  mat-card {
+    display: flex;
+    flex-flow: column;
+    width: calc(50% - 20px);
+    .imgContainer{
+      display: flex;
+      margin: 0 auto;
+    }
+    mat-slide-toggle {
+      margin-bottom: 10px;
+    }
+    mat-form-field {
+      margin: 5px 0;
+    }
+    // align-items: center;
+    .form-submit {
+      align-self: center;
+      width: 120px;
+    }
+  }
+
+}

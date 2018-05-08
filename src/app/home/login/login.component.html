@@ -1,0 +1,29 @@
+
+<section class="form-container">
+  <div class="">
+    <h1 class="mat-display-1">Login</h1>
+    <a routerLink="/home/signin" >Signin</a>
+  </div>
+  
+  <form [formGroup]="loginForm" class="container" (submit)="onSubmit(loginForm)">
+    
+    <mat-form-field>
+      <input matInput placeholder="Enter your email or mobile nr." formControlName="user" [(ngModel)]="value" value="jontryggvi@jontryggvi.is" required>
+      <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.controls.user.invalid">{{getErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="password" matInput placeholder="Enter your password" formControlName="password" [(ngModel)]="valuePass" value="123#$%" required>
+      <button mat-button *ngIf="valuePass" matSuffix mat-icon-button aria-label="Clear" (click)="valuePass=''">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.controls.password.invalid">{{getPasswordErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <button mat-raised-button class="form-submit">Login</button>
+  </form>
+
+</section>
+
+

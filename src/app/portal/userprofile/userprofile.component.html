@@ -1,0 +1,48 @@
+<section class="userContainer" *ngIf="profileUser">
+ <div class="userContainer__left">
+  <mat-card class="tabsContainer">
+    <mat-card-content>
+      <h2 class="example-h2">Tabs with icon labels</h2>
+      <mat-tab-group class="demo-tab-group">
+        <mat-tab label="profile">
+          <ng-template mat-tab-label>
+           <mat-icon>account_circle</mat-icon>
+          </ng-template>
+          <div class="demo-tab-content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis
+            vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur
+            felis nec, feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor, orci enim rutrum
+            enim, vel tempor sapien arcu a tellus.
+          </div>
+        </mat-tab>
+        <mat-tab label="chat">
+          <ng-template mat-tab-label>
+            <mat-icon>chat</mat-icon>
+          </ng-template>
+          <div class="demo-tab-content">
+            here we wiel have som mofo chat
+          </div>
+        </mat-tab>
+        <mat-tab label="Users list" *ngIf="profileUser.role == 'Admin'">
+          <ng-template mat-tab-label>
+            <mat-icon>list</mat-icon>
+          </ng-template>
+            <app-usertable></app-usertable>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+ </div>
+ <div class="userContainer__right">
+    <mat-card class="userContainer__right__user-welcome">
+      <mat-card-header>
+        <div mat-card-avatar class="userContainer__right__user-welcome__header-image">
+          <img [src]="setUserAvatar()" alt="">
+        </div>
+        <mat-card-title>wellcome! {{profileUser.firstname}} {{profileUser.lastname}}</mat-card-title>
+      </mat-card-header>
+    </mat-card>
+ </div>
+  
+
+</section>

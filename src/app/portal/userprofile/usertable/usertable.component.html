@@ -1,0 +1,34 @@
+<div class="example-header">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </mat-form-field>
+</div>
+<mat-table class=" mat-elevation-z8" [dataSource]="dataSource" matSort>
+
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+    <mat-cell *matCellDef="let user ">{{user.id}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="firstname">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>name</mat-header-cell>
+    <mat-cell class="description-cell" *matCellDef="let user  ">{{user.firstname}}</mat-cell>
+
+  </ng-container>
+
+  <ng-container matColumnDef="role">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Role</mat-header-cell>
+    <mat-cell class="duration-cell" *matCellDef="let user ">{{user.role}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="deleteuser">
+    <mat-header-cell *matHeaderCellDef >Delete user</mat-header-cell>
+    <mat-cell class="duration-cell" *matCellDef="let user "><app-modal (click)="userInfo(user)"></app-modal></mat-cell>
+  </ng-container>
+  
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+</mat-table>
+<mat-paginator  *ngIf="userCount > 5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>

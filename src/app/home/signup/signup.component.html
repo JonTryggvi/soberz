@@ -1,0 +1,79 @@
+<section class="form-container">
+  <div class="">
+    <h1 class="mat-display-1">Signin</h1>
+    <a routerLink="/home/login">Login</a>
+  </div>
+
+  <form [formGroup]="signinForm" class="container" (submit)="onSubmit(signinForm)">
+    <mat-card>
+      <div class="imgContainer">
+        <img src="" alt="">
+        <input type="file" placeholder="Profile image" name="sampleFile" formControllName="userImg" id="file" (change)="handleFileInput($event.target.files)" >
+      </div>
+
+      
+      <mat-slide-toggle (change)="isSponsorFunc($event.checked)" formControlName="isSponsor" >{{sponsorToggleText}}</mat-slide-toggle>
+      <mat-form-field hintLabel="Max 20 characters">
+        <input matInput #input maxlength="20" placeholder="Firstname" formControlName="firstname">
+        <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field hintLabel="Max 20 characters">
+        <input matInput #input maxlength="20" placeholder="Lastname" formControlName="lastname">
+        <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
+      </mat-form-field>
+
+        <mat-form-field hintLabel="Max 20 characters">
+          <input matInput #input maxlength="20" placeholder="Username" formControlName="username">
+          <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
+        </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Gender" [(ngModel)]="selectedValue" name="food" formControlName="gender">
+
+          <mat-option *ngFor="let gender of genderTypes" [value]="gender.id">
+            {{gender.gender_name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card>
+    <mat-card>
+      <mat-form-field>
+        <input type="text" matInput placeholder="Enter your mobile number" formControlName="tel" [(ngModel)]="valueTel" >
+        <button mat-button *ngIf="valueTel" matSuffix mat-icon-button aria-label="Clear" (click)="valueTel=''">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="signinForm.controls.tel.value.length > 0 && !signinForm.controls.tel.value.includes('+45') ">{{fixNumber()}}</mat-error>
+        <!-- {{signinForm.status | json}} -->
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Enter your email" formControlName="email" [(ngModel)]="value" required>
+        <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="signinForm.controls.email.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+      
+
+      <mat-form-field>
+        <input matInput placeholder="Enter your email again" formControlName="email2" [(ngModel)]="value2" required>
+        <button mat-button *ngIf="value2" matSuffix mat-icon-button aria-label="Clear" (click)="value2=''">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="signinForm.controls.email2.value !== signinForm.controls.email.value ">{{getErrorMessage2()}}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="password" matInput placeholder="Enter your password" formControlName="password" [(ngModel)]="valuePass" required>
+        <button mat-button *ngIf="valuePass" matSuffix mat-icon-button aria-label="Clear" (click)="valuePass=''">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="signinForm.controls.password.invalid">{{getPasswordErrorMessage()}}</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button class="form-submit">Signup</button>
+    </mat-card>
+  </form>
+
+</section>
