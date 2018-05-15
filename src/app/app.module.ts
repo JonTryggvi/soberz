@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthGuardService } from './auth-guard.service';
 import { AuthService } from './auth.service';
+import { ChatService } from './chat.service';
 import { DataService } from './data.service';
 import { FileUploadService } from './file-upload.service';
 import { HomeComponent } from './home/home.component';
@@ -21,6 +22,7 @@ import { NotfoundComponent } from './notfound/notfound.component';
 import { ModalComponent, ModalOverlay } from './portal/components/modal/modal.component';
 import { PortalComponent } from './portal/portal.component';
 import { SideNavComponent } from './portal/side-nav/side-nav.component';
+import { ChatComponent } from './portal/userprofile/chat/chat.component';
 import { UserprofileComponent } from './portal/userprofile/userprofile.component';
 import { UsertableComponent } from './portal/userprofile/usertable/usertable.component';
 import { IAppState, rootReducer } from './store/store';
@@ -39,7 +41,8 @@ import { UsersService } from './users.service';
     SideNavComponent,
     UsertableComponent,
     ModalComponent,
-    ModalOverlay
+    ModalOverlay,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,7 @@ import { UsersService } from './users.service';
     MaterialModule,
   ],
   entryComponents: [ModalOverlay],
-  providers: [AuthGuardService, AuthService, DataService, UsersActions, UsersService, UsersEpic, FileUploadService],
+  providers: [AuthGuardService, AuthService, DataService, UsersActions, UsersService, UsersEpic, FileUploadService, ChatService],
   bootstrap: [AppComponent]
 })
 export class AppModule { 
@@ -67,7 +70,8 @@ export class AppModule {
       this.usersEpic.validateUser,
       this.usersEpic.checkForToken,
       this.usersEpic.getAllUsers,
-      this.usersEpic.saveUser
+      this.usersEpic.saveUser,
+      this.usersEpic.updateUserByFieldName
       // this.usersEpic.deleteUser,
       // this.usersEpic.createUser,
       // this.usersEpic.rateSitter

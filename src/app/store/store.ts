@@ -9,7 +9,6 @@ export class UsersState {
   token: String;
   validToken: String;
   soberUsers: User[];
-  userTodelete: User;
 }
 export class IAppState {
   users?: UsersState;

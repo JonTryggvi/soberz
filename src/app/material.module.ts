@@ -23,8 +23,7 @@ import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, Mat
     MatTableModule,
     MatSortModule,
     MatDialogModule,
-    MatProgressSpinnerModule
-
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatFormFieldModule,

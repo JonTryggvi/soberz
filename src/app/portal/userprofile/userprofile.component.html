@@ -1,18 +1,205 @@
-<section class="userContainer" *ngIf="profileUser">
+<section class="userContainer" *ngIf="profileUser" fxLayout="row" fxLayout.xs="column-reverse">
  <div class="userContainer__left">
   <mat-card class="tabsContainer">
     <mat-card-content>
-      <h2 class="example-h2">Tabs with icon labels</h2>
+      <h2 class="example-h2">Soberz</h2>
       <mat-tab-group class="demo-tab-group">
         <mat-tab label="profile">
           <ng-template mat-tab-label>
            <mat-icon>account_circle</mat-icon>
           </ng-template>
           <div class="demo-tab-content">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis
-            vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur
-            felis nec, feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor, orci enim rutrum
-            enim, vel tempor sapien arcu a tellus.
+            <mat-card class="userInfo double">
+              <div class="imgContainer" *ngIf="!imgEditMode" >
+                <img *ngIf="serverPath + profileImg" [src]="serverPath + oldImg" alt="" >
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'imgUrl')">
+                  <mat-icon class="editIcon" color="primary">edit</mat-icon>
+                </button>
+                <!-- <button (click)="testHttp()">test http</button> -->
+              </div>
+              <div class="imgInput" *ngIf="imgEditMode">
+                <input mat-button type="file" placeholder="Profile image" name="sampleFile" name="userImg" id="file" (change)="handleFileInput($event.target.files, 'imgUrl')">
+              </div>
+            </mat-card>
+            <mat-card class="userInfo double">
+              <mat-card-header *ngIf="!firstNameEditMode">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'firstname')">
+                  <mat-icon class="editIcon" color="primary" >edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle"><span class="accent">Firstname:</span> {{profileUser.firstname}}</mat-card-title>  
+              </mat-card-header>
+              <mat-card-header *ngIf="firstNameEditMode">
+                <mat-form-field hintLabel="Max 20 characters">
+                  <input matInput #unInp maxlength="20" placeholder="Firstname" name="firstname" value="{{profileUser.firstname}}">
+                  <mat-hint align="end">{{unInp.value?.length || 0}}/20</mat-hint>
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="submit(unInp.value, 'firstname')">
+                  <mat-icon >
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'firstname')">
+                  <mat-icon mat-mini-fab >
+                    close 
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+
+              <mat-card-header *ngIf="!lastNameEditMode">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'lastname')">
+                  <mat-icon class="editIcon" color="primary">edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle">
+                  <span class="accent">Lastname:</span> {{profileUser.lastname}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-header *ngIf="lastNameEditMode">
+                <mat-form-field hintLabel="Max 20 characters">
+                  <input matInput #lastnInp maxlength="20" placeholder="Lastname" name="lastname" value="{{profileUser.lastname}}">
+                  <mat-hint align="end">{{lastnInp.value?.length || 0}}/20</mat-hint>
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="submit(lastnInp.value, 'lastname')">
+                  <mat-icon>
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'lastname')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+              </mat-card>
+              
+            <mat-card class="userInfo double">
+              <mat-card-header *ngIf="!emailEditMode">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'email')">
+                  <mat-icon class="editIcon" color="primary" >edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle"><span class="accent">Email:</span> {{profileUser.email}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-header *ngIf="emailEditMode">
+                <mat-form-field hintLabel="Max 255 characters">
+                  <input matInput #emailInp maxlength="255" placeholder="email" name="email" value="{{profileUser.email}}">
+                  <mat-hint align="end">{{emailInp.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="submit(emailInp.value, 'email')">
+                  <mat-icon>
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'email')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+
+              <mat-card-header *ngIf="!telEditMode">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'mobile')">
+                  <mat-icon class="editIcon" color="primary">edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle">
+                  <span class="accent">mobile:</span> {{profileUser.mobile}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-header *ngIf="telEditMode">
+                <mat-form-field hintLabel="Max 20 characters">
+                  <input matInput #telInp maxlength="20" placeholder="Mobile" name="mobile" value="{{profileUser.mobile}}">
+                  <mat-hint align="end">{{telInp.value?.length || 0}}/20</mat-hint>
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="submit(telInp.value, 'mobile')">
+                  <mat-icon>
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'mobile')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+            </mat-card>
+
+            <mat-card class="userInfo double">
+              <mat-card-header *ngIf="!usernameEditMode">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'username')">
+                  <mat-icon class="editIcon" color="primary">edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle">
+                  <span class="accent">Username:</span> {{profileUser.username}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-header *ngIf="usernameEditMode">
+                <mat-form-field hintLabel="Max 20 characters">
+                  <input matInput #usernameInp maxlength="20" placeholder="Username" name="username" value="{{profileUser.username}}">
+                  <mat-hint align="end">{{usernameInp.value?.length || 0}}/20</mat-hint>
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="submit(usernameInp.value, 'username')">
+                  <mat-icon>
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'username')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+
+              <mat-card-header *ngIf="!sponsorEditMode">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'sponsor')">
+                  <mat-icon class="editIcon" color="primary">edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle">
+                  <span class="accent">Sponsor:</span> {{ theSponsor === true ? 'You are a sponsor!!!!' : 'You are on your way to become a sponsor'}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-header *ngIf="sponsorEditMode">
+               
+                  <mat-checkbox [(ngModel)]="theSponsor" name="sponsor" (change)="checkSponsor(theSponsor)">turn on the sponsor </mat-checkbox>
+                  <!-- <input matInput #spnsrInp maxlength="20" placeholder="Sponsor" name="sponser" value="{{profileUser.sponsor}}">
+                  <mat-hint align="end">{{spnsrInp.value?.length || 0}}/20</mat-hint> -->
+            
+                <button mat-mini-fab color="primary" (click)="submit(theSponsor, 'sponsor')">
+                  <mat-icon>
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'sponsor')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+            </mat-card>
+
+            <mat-card class="userInfo double">
+              
+            
+              <mat-card-header *ngIf="!aboutEditMode" class="fullwidth">
+                <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'about')">
+                  <mat-icon class="editIcon" color="primary">edit</mat-icon>
+                </button>
+                <mat-card-title class="userCardTitle">
+                  <span class="accent">About {{profileUser.username}}:</span> {{profileUser.about}}</mat-card-title>
+              </mat-card-header>
+              <mat-card-header *ngIf="aboutEditMode" class="fullwidth">
+                <mat-form-field >
+                  <textarea matInput #aboutInp placeholder="About {{profileUser.username}}" name="about" value="{{profileUser.about}}"></textarea>
+                  <!-- <mat-hint align="end">{{telInp.value?.length || 0}}/20</mat-hint> -->
+                </mat-form-field>
+                <button mat-mini-fab color="primary" (click)="submit(aboutInp.value, 'about')">
+                  <mat-icon>
+                    check
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'about')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
+              </mat-card-header>
+            </mat-card>
+            <mat-card>
+              <button mat-button><mat-icon>delete</mat-icon> delete account</button>
+            </mat-card>
           </div>
         </mat-tab>
         <mat-tab label="chat">
@@ -20,7 +207,7 @@
             <mat-icon>chat</mat-icon>
           </ng-template>
           <div class="demo-tab-content">
-            here we wiel have som mofo chat
+            <app-chat></app-chat>
           </div>
         </mat-tab>
         <mat-tab label="Users list" *ngIf="profileUser.role == 'Admin'">
@@ -34,13 +221,29 @@
   </mat-card>
  </div>
  <div class="userContainer__right">
+   
     <mat-card class="userContainer__right__user-welcome">
       <mat-card-header>
-        <div mat-card-avatar class="userContainer__right__user-welcome__header-image">
-          <img [src]="setUserAvatar()" alt="">
-        </div>
-        <mat-card-title>wellcome! {{profileUser.firstname}} {{profileUser.lastname}}</mat-card-title>
+        <img mat-card-avatar *ngIf="serverPath + profileImg" [src]="serverPath + profileImg" alt="">
+        <mat-card-title>{{profileUser.firstname}} {{profileUser.lastname}}</mat-card-title>
       </mat-card-header>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-title>
+        Online users
+      </mat-card-title>
+      <div *ngFor="let liveUsers of loggedInUserId" >
+        <div>
+           {{liveUsers.user.firstname}}
+        </div> 
+      </div>
+    </mat-card>
+
+    <mat-card *ngIf="jChuckNorris">
+      <!-- <img [src]="jChuckNorris.icon_url"> -->
+      <mat-card-title>The Chuck Norris corner!</mat-card-title>
+      <mat-card-content>{{jChuckNorris.value}}</mat-card-content>
     </mat-card>
  </div>
   

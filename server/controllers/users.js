@@ -1,8 +1,50 @@
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const jConfig = require('../config.js')
-var path = require('path')
+const path = require('path')
+const moment = require('moment');
+const time = moment();
+const time_format = time.format('YYYY-MM-DD HH:mm:ss Z');
+// console.log(time_format);
+function isJson(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+
 const jUser = {}
 jUser.message = {}
+
+jUser.updateUserbyField = function (req, res, next) {
+  try {
+    // console.log(req.fields);
+    const columnName = req.fields.name
+    let dataValue = req.fields.value
+    const userId = req.fields.userId
+    const stmt = 'UPDATE Users SET ' + columnName + ' = ? WHERE Users.id = ?';
+    const params = [dataValue, userId]
+    // console.log(params);
+    
+    db.run(stmt, params, function (err) {
+      if (err) {
+        const jError = {status: 'failed', message: 'updateUserbyField query failed ' + err}
+        return res.json(jError)
+      }
+      if (isJson(dataValue)) {
+        dataValue = JSON.parse(dataValue);
+      } 
+      const jSuccess = { status: 'ok', message: 'userfield: ' + columnName + ' has been updateed', updatedData: {name: columnName, userId: userId, value: dataValue}}
+      return res.json(jSuccess)
+      // next()
+    })
+  } catch (error) {
+    const err = { message: error.message, where: 'controllers/users.js -> updateUserByField function' }
+    gLog('err', err.message + ' -> ' + err.where)
+  }
+}
 
 jUser.saveFile = function (req, res, next) {
   // const sImgPath = req.files.userImg.path
@@ -24,28 +66,58 @@ jUser.saveFile = function (req, res, next) {
           } 
           res.status(200);
           const imgPath = '/uploads/img/' + file_name + '.' + file_ext
-          res.json({ 'success': true, 'imgPath': imgPath, 'imgId': file_name });
-         
+          return res.json({ 'success': true, 'imgPath': imgPath, 'imgId': file_name });
+          next()
         });
       });
     });
   } catch (error) {
-    gLog('err', 'savefile error: '+ error.message)
+    const err = { message: error.message, where: 'controllers/users.js -> saveFile function' }
+    gLog('err', err.message + ' -> ' + err.where)
   }
 }
 
-jUser.getAllUsers = function (req, res) {
+jUser.deleteFile = function (req, res, next) {
   try {
-    const stmt = "SELECT json_extract(a.imgUrl, '$') AS userImg, json_extract(a.sponsors, '$') AS sponsors, json_extract(a.sponsees, '$') AS sponsees, a.id AS id, a.email, a.firstname, a.lastname, a.mobile, a.sponsor, a.username, b.gender_name AS gender, c.role_name AS role FROM Users AS a INNER JOIN genders  AS b ON (a.gender = b.id)  INNER JOIN user_roles AS c ON (a.user_role = c.role_id)"
+    const fileToDelete = req.fields
+    console.log(fileToDelete.filePath)
+    console.log(gFs.existsSync('.'+fileToDelete.filePath));
+    if (gFs.existsSync(fileToDelete.filePath)) {
+      gFs.unlink('.' + fileToDelete.filePath, (err) => {
+      if (err) {
+        gLog('err', err)
+        return false
+      }
+      return res.send(fileToDelete + ' was deleted')
+        next()
+    });
+    }
+  
+      
+  } catch (error) {
+    const err = { message: error.message, where: 'controllers/users.js -> deleteFile function' }
+    gLog('err', err.message + ' -> ' + err.where)
+        
+  }
+}
+
+jUser.getAllUsers = function (req, res, next) {
+  try {
+    const stmt = "SELECT about, json_extract(a.imgUrl, '$') AS userImg, json_extract(a.sponsors, '$') AS sponsors, json_extract(a.sponsees, '$') AS sponsees, a.id, a.email, a.firstname, a.lastname, a.mobile, a.sponsor, a.username, a.online, b.gender_name AS gender, c.role_name AS role FROM Users AS a INNER JOIN genders  AS b ON (a.gender = b.id)  INNER JOIN user_roles AS c ON (a.user_role = c.role_id)"
     db.all(stmt, function (err, ajRows) {
       if (err) {
-        gLog('err', {message: 'could not read from database', error: err})
+        const jError = { message: 'could not read from database', error: err }
+        const jClientErr = {message: 'server error, contact system admin'}
+        gLog('err', jError.message)
+        return res.send(jClientErr)
       }
+      gLog('ex', res.headersSent + ' getUsers function')
       res.send(ajRows)
+      next()
     })
   } catch (error) {
-    const err = {message: error.message}
-    gLog('err', err)
+    const err = { message: error.message, where: 'controllers/users.js -> getAllUsers function' }
+    gLog('err', err.message + ' -> ' + err.where)
   } 
 } 
 jUser.getGenders = function (req, res) {
@@ -54,13 +126,14 @@ jUser.getGenders = function (req, res) {
     db.all(stmt, function (err, ajRows) {
       if (err) {
         gLog('err', 'could not connect to the genders table')
-        return
+        return true
       }
       res.send(ajRows)
     })
   }
-  catch (err) {
-
+  catch (error) {
+    const err = { message: error.message, where: 'controllers/users.js -> getGenders function' }
+    gLog('err', err.message + ' -> ' + err.where)
   }
 }
 jUser.logInUser = function(req, res, next) {
@@ -68,7 +141,7 @@ jUser.logInUser = function(req, res, next) {
     const password = req.fields.password //'123#$%'
     const email = req.fields.user //'jontryggvi@jontryggvi.is'
     // const stmt = "SELECT id, user_role, sponsor FROM Users WHERE email = ? AND password = ?"
-    const stmt = "SELECT users.id, user_roles.role_name FROM Users INNER JOIN user_roles ON users.id = user_roles.role_id WHERE email = ? AND password = ?"
+    const stmt = "SELECT Users.id, user_roles.role_name FROM Users INNER JOIN user_roles ON Users.user_role = user_roles.role_id  WHERE email = ? AND password = ?"
 
     db.get(stmt, [email, password], function (err, jRow) {
       gLog('ex', res.headersSent + ' before')
@@ -88,22 +161,23 @@ jUser.logInUser = function(req, res, next) {
 
        const secret = jConfig.secret;
         var token = jwt.sign(payload, secret, {
-          expiresIn: "2h" // expires in 24 hours
+          expiresIn: "2h" // expires in 2 hours
         });
-        // req.userId = jRow.id
-        // req.userRole = jRow.user_role
         jRes = { message: 'ok', response: jRow, token: token }
         jUser.message = jRes
         res.json(jRes)
+        next()
         gLog('ex', res.headersSent + ' after')
       } else {
         jRes = { message: 'no match', response: jRow }
         
         res.json(jRes)
+        next()
       }
     })
   } catch (error) {
-    gLog('err', error.message)
+    const err = { message: error.message, where: 'controllers/users.js -> logInUser function' }
+    gLog('err', err.message + ' -> ' + err.where)
   }
 }
 
@@ -120,25 +194,29 @@ jUser.verifyUsers = function (req, res, next) {
         if (err) {
           return res.json({ success: false, message: 'Failed to authenticate token.' })
         } else {
-          // if everything is good, save to request for use in other routes
           req.token = token
           req.decoded = decoded
           req.userId = userId
           next()
         }
+         
+         
+        
+          // if everything is good, save to request for use in other routes
+     
+        
       });
 
     } else {
       // if there is no token
-      // return an error
-      // took out res.status(403).send(...)
       return res.send({
         success: false,
         message: 'No token provided.'
       });
     }
   } catch (error) {
-    gLog('err','verify error: ' + error.message)
+    const err = { message: error.message, where: ' controllers/users.js -> verifyUsers function' }
+    gLog('err', err.message+ ' -> ' + err.where)
   }
 }
 
@@ -146,17 +224,20 @@ jUser.saveUser = function (req, res, next) {
   try {
     const jUserData = req.fields
     const sjUserImg = jUserData.userImg
-    const aParams = [jUserData.firstname, jUserData.lastname, jUserData.username, jUserData.email, jUserData.tel, jUserData.gender, jUserData.isSponsor, sjUserImg, jUserData.password ]
-    stmt = 'INSERT INTO Users (firstname, lastname, username, email, mobile, gender, sponsor, imgUrl, password ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    const aParams = [jUserData.firstname, jUserData.lastname, jUserData.username, jUserData.email, jUserData.tel, jUserData.gender, jUserData.isSponsor, sjUserImg, jUserData.password, time_format ]
+    stmt = 'INSERT INTO Users (firstname, lastname, username, email, mobile, gender, sponsor, imgUrl, password, date ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     db.run(stmt, aParams, function (err, data) {
       if (err) {
         console.log(err);
         return res.send(err)
       }
-      res.send('ok')
+      res.status(200)
+      const jSuccess = { status: 'ok', message: 'user: ' + jUserData.username + ' has been added' }
+      res.send(jSuccess)
     })
   } catch (error) {
-    gLog('err', 'save user catch error: '+ error.message)
+    const err = { message: error.message, where: ' controllers/users.js -> getGenders function' }
+    gLog('err', err.message + ' -> ' + err.where)
   }
 }
 

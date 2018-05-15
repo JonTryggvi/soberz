@@ -13,7 +13,7 @@
   <ng-container matColumnDef="firstname">
     <mat-header-cell *matHeaderCellDef mat-sort-header>name</mat-header-cell>
     <mat-cell class="description-cell" *matCellDef="let user  ">{{user.firstname}}</mat-cell>
-
+    
   </ng-container>
 
   <ng-container matColumnDef="role">
@@ -23,12 +23,12 @@
 
   <ng-container matColumnDef="deleteuser">
     <mat-header-cell *matHeaderCellDef >Delete user</mat-header-cell>
-    <mat-cell class="duration-cell" *matCellDef="let user "><app-modal (click)="userInfo(user)"></app-modal></mat-cell>
+    <mat-cell class="duration-cell" *matCellDef="let user; let i = index"><app-modal (click)="userData(user, i)"></app-modal></mat-cell>
   </ng-container>
   
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
-  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  <mat-row *matRowDef="let row; let i = index; columns: displayedColumns"></mat-row>
 
 </mat-table>
 <mat-paginator  *ngIf="userCount > 5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>

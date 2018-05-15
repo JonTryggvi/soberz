@@ -11,13 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "2.4.1",
+    "events": "^2.0.0",
     "express": "4.16.3",
     "express-fileupload": "^0.4.0",
     "express-formidable": "^1.0.0",
     "formidable": "^1.2.1",
     "fsevents": "^1.2.3",
     "jsonwebtoken": "^8.2.1",
+    "moment": "^2.22.1",
+    "mongodb": "^3.1.0-beta4",
     "morgan": "^1.9.0",
+    "nodemon": "^1.17.4",
+    "socket.io": "^2.1.0",
     "sqlite3": "4.0.0"
   }
 }

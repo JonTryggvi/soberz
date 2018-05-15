@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, HostListener, ElementRef,  ViewCh
 import { MatSidenavModule } from '@angular/material';
 import { UsersActions } from '../../users.actions';
 import { AuthService } from '../../auth.service';
+import { ChatService } from '../../chat.service';
 
 
 
@@ -13,9 +14,10 @@ import { AuthService } from '../../auth.service';
 export class SideNavComponent implements OnInit {
   public text: String;
   userId;
-  constructor(private eRef: ElementRef, private usersActions: UsersActions, private authService: AuthService) { }
+  constructor(private eRef: ElementRef, private usersActions: UsersActions, private authService: AuthService, private chatServive: ChatService) { }
   
   logOut() {
+  
     this.usersActions.logOut();
     this.authService.setLocalStorage(null, undefined, undefined);
     location.replace('/');

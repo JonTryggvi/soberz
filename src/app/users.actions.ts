@@ -26,13 +26,17 @@ export class UsersActions {
   static SAVE_USER_SUCCESS: String = 'SAVE_USER_SUCCESS';
   static SAVE_USER_ERROR: String = 'SAVE_USER_ERROR';
   static GET_USER_TO_DELETE: String = 'GET_USER_TO_DELETE';
+  static UPDATE_USER_BY_FIELD: String = 'UPDATE_USER_BY_FIELD';
+  static UPDATE_USER_BY_FIELD_SUCCESS: String = 'UPDATE_USER_BY_FIELD_SUCCESS';
+  static UPDATE_USER_BY_FIELD_ERROR: String = 'UPDATE_USER_BY_FIELD_SUCCESS';
 
-  getUserToDelete(user: User) {
+  updateUserByField(inpVal, inpName, userId) {
+  
     this.ngRedux.dispatch({
-      type: UsersActions.GET_USER_TO_DELETE,
-      payload: user
+      type: UsersActions.UPDATE_USER_BY_FIELD,
+      payload: {inpVal, inpName, userId}
     })
-  }  
+  }
 
   saveUser(formObject: User) {
     this.ngRedux.dispatch({

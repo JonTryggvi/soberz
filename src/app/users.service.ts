@@ -11,6 +11,12 @@ import { UsersState } from './store/store';
 export class UsersService {
   
   constructor(private authService: AuthService, private http: HttpClient, private dataService: DataService) { }
+  updateUserByField(inpVal, inpName, userId) {
+    const updateData = { value: inpVal, name: inpName, userId: userId };
+    // console.log(updateData);
+    return this.http.put(this.dataService.serverPath + '/api/update-user-field', updateData, { responseType: 'json' });
+  }
+
   // isLoggedIn = this.authService.isLoggedIn;
   getGender(): Observable<any>  {
     return this.http.get(this.dataService.serverPath + '/api/get-genders').map(res => res);
@@ -18,6 +24,13 @@ export class UsersService {
   
   saveUser(formObject: User) { 
     return this.http.post(this.dataService.serverPath + '/api/save-user', formObject, { responseType: 'text' });
+  }
+
+  deleteFile(filePath, token): Observable<any> {
+    const endpoint = `${this.dataService.serverPath}/api/delete-file`;
+    const formData = { filePath, token };
+    // console.log(formData);
+    return this.http.post(endpoint, formData, { responseType: 'json' }).map(res => res);
   }
 
   usCheckToken(token, userId: number) {
@@ -45,8 +58,9 @@ export class UsersService {
     return this.http.get(this.dataService.serverPath + '/api/get-users', httpOptions);
   }
 
-  
-  
+  getCucky(): Observable<any> {
+    return this.http.get('https://api.chucknorris.io/jokes/random').map(res => res);
+ }
   static getInitialUsersState(): UsersState {
     return {
       userId: undefined,
@@ -54,7 +68,7 @@ export class UsersService {
       token: '',
       validToken: '',
       soberUsers: [],
-      userTodelete: undefined
+
     };
   }
   
