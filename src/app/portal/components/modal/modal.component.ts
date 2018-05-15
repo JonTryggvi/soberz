@@ -12,33 +12,40 @@ import { UsertableComponent } from '../../userprofile/usertable/usertable.compon
 })
 
 export class ModalComponent implements OnInit {
-  animal: string;
-  name: string;
-  usertoDelete;
+  userData;
+  userObj;
   constructor(private ngRedux: NgRedux<IAppState>, public dialog: MatDialog, private usertableComponent: UsertableComponent, private dataService: DataService) { 
-    this.ngRedux.select(state => state.users.userTodelete).subscribe(x => {
-      console.log(x);
-      if (x) {
-        this.openDialog(x);
-      }
 
-    });
-    
   }
-  
-  
+
   openDialog(obj): void {
     let dialogRef = this.dialog.open(ModalOverlay, {
       width: '250px',
       data: obj
     });
-
   }
 
   ngOnInit() {
+    this.dataService.currentData.subscribe(data => {
+      this.userObj = data;
+      console.log(data);
+      
+      if (data.id) {
+        this.openDialog(this.userObj);
+        return;
+      }
+      // this.openDialog(this.userObj);
+
+    });
     // we acomplish this with redux
- 
- 
+    // this.usertoDelete = this.ngRedux.select(state => state.users);
+    // this.usertoDelete.subscribe(x => {
+    //   // console.log(x);
+    //   if (x) {
+    //     console.log(x);
+    //     //  this.openDialog(x);
+    //   }
+    // });
   }
  
 

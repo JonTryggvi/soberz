@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class AuthService {
@@ -33,12 +33,9 @@ export class AuthService {
     
   }
 
-  // logout(): void {
-  //   console.log(this.isLoggedIn);
-  //   this.isLoggedIn = false;
-  //   localStorage.setItem('loggedIn', JSON.stringify(this.isLoggedIn));
-   
-  // }
+  logout(id, token, validToken): void {
+    this.setLocalStorage(id, token, validToken);
+  }
    
   constructor(private http: HttpClient) { }
 

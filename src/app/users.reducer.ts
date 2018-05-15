@@ -7,16 +7,33 @@ const INITIAL_STATE: UsersState = UsersService.getInitialUsersState();
 
 export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
   switch (action.type) {
-    case UsersActions.GET_USER_TO_DELETE:
-      let userToDeleteState = { ...state };
-      userToDeleteState.userTodelete = action.payload;
-      return tassign(state, userToDeleteState);  
+    case UsersActions.UPDATE_USER_BY_FIELD:
+      return state;
+    case UsersActions.UPDATE_USER_BY_FIELD_SUCCESS:
+        // remember to update state on db callback
+      // console.log(state);
+      let upDateUserState = [...state.soberUsers ]
+      const jUserFromServer = action.payload.updatedData
+      let userToUPdateState = upDateUserState.filter(x => x.id === jUserFromServer.userId ? x[jUserFromServer.name] = jUserFromServer.value : x.firstname);
+      
+      
+      console.log(userToUPdateState);
+      
+      return tassign(state, { soberUsers: upDateUserState});  
+    case UsersActions.UPDATE_USER_BY_FIELD_ERROR:
+      return state;  
+  
     case UsersActions.SAVE_USER:
       console.log(action.payload);
       return state;
     case UsersActions.SAVE_USER_SUCCESS:
-        // remember to update state with new user
-      return state;
+      // remember to update state with new user
+      let newUserState = { ...state };
+      newUserState.soberUsers.push(action.payload);
+      // return state;
+      console.log(newUserState);
+      
+       return tassign(state, newUserState);
     
     case UsersActions.SAVE_USER_ERROR:
       return state;  
@@ -47,7 +64,8 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       // console.log(action.payload);
       let validState = { ...state };
       validState.validToken = action.payload.message;
-      // console.log(validState);
+      // console.log(action.payload);
+      
       validState.userId = Number(action.payload.userId);
       validState.token = action.payload.token;
       return tassign(state, validState);
@@ -62,7 +80,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
     case UsersActions.GET_ALL_USERS: 
       return state;
     case UsersActions.GET_ALL_USERS_SUCCESS:
-      // console.log(action.payload);
+      console.log(action.payload);
       
       let ajUsers = action.payload.map((s, i) => {
         s.sponsors = JSON.parse(s.sponsors);

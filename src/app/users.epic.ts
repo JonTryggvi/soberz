@@ -14,10 +14,27 @@ import { UsersService } from "./users.service";
 export class UsersEpic { 
   constructor(private userServise: UsersService, private authServise: AuthService) { }
 
+  updateUserByFieldName = (action$: ActionsObservable<any>) => { 
+    return action$.ofType(UsersActions.UPDATE_USER_BY_FIELD)
+      .mergeMap(({ payload }) => {
+        return this.userServise.updateUserByField(payload.inpVal, payload.inpName, payload.userId)
+          .map((result) => ({
+            type: UsersActions.UPDATE_USER_BY_FIELD_SUCCESS,
+            payload: result
+          }))
+          .catch(error => Observable.of({
+            type: UsersActions.UPDATE_USER_BY_FIELD_ERROR,
+            payload: error
+          }));
+      });
+  }
+
+  
+
   saveUser = (action$: ActionsObservable<any>) => {
     return action$.ofType(UsersActions.SAVE_USER)
       .mergeMap(({payload}) => {
-        console.log(payload);
+        // console.log(payload);
         
         return this.userServise.saveUser(payload)
           .map((result) => ({
@@ -64,7 +81,7 @@ export class UsersEpic {
   checkForToken = (action$: ActionsObservable<any>) => {
     return action$.ofType(UsersActions.CHECK_TOKEN)
       .mergeMap(({ payload }) => {
-        console.log(payload);
+        // console.log(payload);
         
         return this.userServise.usCheckToken(payload[0], payload[1] )
       .map((result) => ({

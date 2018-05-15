@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { UsersActions } from '../../users.actions';
-import { AuthService } from '../../auth.service';
 import { NgRedux } from '@angular-redux/store';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth.service';
 import { IAppState } from '../../store/store';
+import { UsersActions } from '../../users.actions';
 // import { UsersActions } from '../../users.actions';
 
 @Component({
@@ -55,8 +55,8 @@ export class LoginComponent implements OnInit {
    
     
     this.loginForm = this.fb.group({
-      user: ['jontryggvi@jontryggvi.is', [Validators.required, Validators.email]],
-      password: ['123#$%', Validators.required]
+      user: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     })
     // console.log(this.loginForm);
 
