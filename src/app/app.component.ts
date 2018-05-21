@@ -19,8 +19,11 @@ export class AppComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router,private usersActions: UsersActions, private authService: AuthService, private ngRedux: NgRedux<IAppState>) {
     // console.log(this.authService.isToken);
     var paramId = Number(this.route.snapshot.paramMap.get('id'));
+    // console.log(this.authService.isToken);
+    if (this.authService.isToken) {
+      this.usersActions.checkToken(this.authService.isToken, this.authService.isUserIdValid);
+    }
     
-    this.usersActions.checkToken(this.authService.isToken, this.authService.isUserIdValid);
   }
   
   ngOnInit() {
@@ -32,13 +35,7 @@ export class AppComponent implements OnInit {
         this.authService.setLocalStorage(this.authService.isUserIdValid, res.token, res.validToken)
         this.router.navigate(['portal/user-profile/' + this.authService.isUserIdValid]);
       }
-      // this.usersActions.getToken(this.authService.isToken);
-      // this.isBaby = res.isBaby;
 
-
-      // if (this.authService.isLoggedIn) {
-      //   this.router.navigate(['portal']);
-      // }
 
     });
    

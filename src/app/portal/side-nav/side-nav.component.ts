@@ -17,7 +17,7 @@ export class SideNavComponent implements OnInit {
   constructor(private eRef: ElementRef, private usersActions: UsersActions, private authService: AuthService, private chatServive: ChatService) { }
   
   logOut() {
-  
+
     this.usersActions.logOut();
     this.authService.setLocalStorage(null, undefined, undefined);
     location.replace('/');

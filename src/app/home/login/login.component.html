@@ -5,24 +5,55 @@
     <a routerLink="/home/signin" >Signin</a>
   </div>
   
-  <form [formGroup]="loginForm" class="container" (submit)="onSubmit(loginForm)">
-    
-    <mat-form-field>
-      <input matInput placeholder="Enter your email or mobile nr." formControlName="user" [(ngModel)]="value" value="jontryggvi@jontryggvi.is" required>
-      <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-        <mat-icon>close</mat-icon>
-      </button>
-      <mat-error *ngIf="loginForm.controls.user.invalid">{{getErrorMessage()}}</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input type="password" matInput placeholder="Enter your password" formControlName="password" [(ngModel)]="valuePass" value="123#$%" required>
-      <button mat-button *ngIf="valuePass" matSuffix mat-icon-button aria-label="Clear" (click)="valuePass=''">
-        <mat-icon>close</mat-icon>
-      </button>
-      <mat-error *ngIf="loginForm.controls.password.invalid">{{getPasswordErrorMessage()}}</mat-error>
-    </mat-form-field>
-    <button mat-raised-button class="form-submit">Login</button>
-  </form>
+  
+
+  <mat-card>
+    <mat-card-content>
+      
+      <mat-tab-group class="demo-tab-group">
+        <mat-tab label="Email">
+          <form [formGroup]="loginForm" class="container" (submit)="onSubmit(loginForm)">
+          
+            <mat-form-field>
+              <input matInput placeholder="Enter your email or mobile nr." formControlName="user" [(ngModel)]="value" value="jontryggvi@jontryggvi.is"
+                required>
+              <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+                <mat-icon>close</mat-icon>
+              </button>
+              <mat-error *ngIf="loginForm.controls.user.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input type="password" matInput placeholder="Enter your password" formControlName="password" [(ngModel)]="valuePass" value="123#$%"
+                required>
+              <button mat-button *ngIf="valuePass" matSuffix mat-icon-button aria-label="Clear" (click)="valuePass=''">
+                <mat-icon>close</mat-icon>
+              </button>
+              <mat-error *ngIf="loginForm.controls.password.invalid">{{getPasswordErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <button mat-raised-button class="form-submit">Login</button>
+          </form>
+        </mat-tab>
+        <mat-tab label="Mobile">
+          <form [formGroup]="loginFormSms">
+              <mat-form-field>
+                <input type="text" matInput placeholder="Enter your mobile #" formControlName="mobilenumber" [(ngModel)]="mobPass" value="" (keyup)="mobPass.length && mobPass.length >=6 ? checkNumber(mobPass) : ''"
+                  required>
+                <button mat-button *ngIf="mobPass" matSuffix mat-icon-button aria-label="Clear" (click)="mobPass=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-error *ngIf="loginFormSms.controls.mobilenumber.invalid">{{getMobileErrorMessage()}}</mat-error>
+              </mat-form-field>
+              <button mat-raised-button class="form-submit">Login</button>
+          </form>
+           {{loginFormSms.controls.mobilenumber.status}}
+        </mat-tab>
+        
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+  <!-- <mat-card *ngIf="loginSuccess === false">
+    Something went wrong. Please make sure that you have authenticated your profile!
+  </mat-card> -->
 
 </section>
 

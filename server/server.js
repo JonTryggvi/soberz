@@ -16,6 +16,8 @@ app.use(formidable())
 global.db = new sqlite3.Database(__dirname + '/data.db')
 global.config = require('./config'); // get our config file
 global.gFs = require('fs')
+global.crypto = require('crypto');
+global.serverpath = 'http://localhost:1983/'
 // app.use(fileUpload())
 
 app.set('superSecret', config.secret)
@@ -27,13 +29,13 @@ var sDatabasePath = 'mongodb://127.0.0.1:27017/'
 
 mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {   
   if (err) {
-    console.log(chalk.white.bgRed.bold('ERROR 003 -> Cannot connect to the database ' + sDataBaseName))
+    console.log(chalk.white.bgRed.bold('ERROR mongoDb -> Cannot connect to the database ' + sDataBaseName))
     return false
   }
   global.mongodb = client.db(sDataBaseName)
 
-  console.log(chalk.magenta.bgGreen('OK 002 -> Connected to the database ' + sDataBaseName))
-
+  console.log(chalk.black.bgGreen('OK 002 -> Connected to the database ' + sDataBaseName))
+  gLog('ok', 'OK mongoDb -> Connected to the database ' + sDataBaseName)
   return true
 }) 
 
@@ -41,12 +43,13 @@ mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {
 // console.log(process.argv);
 // var setup = () => {
 //   // console.log('SETTING VARIABLES')
-//   iHttpPort = process.argv[process.argv.indexOf('--HTTP') + 1]
-//   iHttpsPort = process.argv[process.argv.indexOf('--HTTPS') + 1]
+  // iHttpPort = process.argv[process.argv.indexOf('--HTTP') + 1]
+  // iHttpsPort = process.argv[process.argv.indexOf('--HTTPS') + 1]
 //   console.log(iHttpPort);
 
 // }
 // setup()
+
 // ****************************************************************************************************
 
 const users = require(__dirname + '/controllers/users.js')
@@ -57,16 +60,16 @@ const users = require(__dirname + '/controllers/users.js')
 global.gLog = (sStatus, sMessage) => {
   switch (sStatus) {
     case 'ok':
-      console.log(chalk.green(sMessage))  
+      console.log(chalk.black.bgGreen(sMessage))  
       break
     case 'err':
-      console.log(chalk.red(sMessage))
+      console.log(chalk.black.bgRed(sMessage))
       break 
     case 'ex':
       console.log(chalk.magenta(sMessage))
       break
     case 'info':
-      console.log(sMessage)
+      console.log(chalk.blue(sMessage))
       break
   }
 }
@@ -98,7 +101,7 @@ const fronEndRoutes = express.Router()
 
 app.use( '/uploads', express.static(__dirname + '/uploads' ))
 
-fronEndRoutes.get('/', function (req, res, next) {
+fronEndRoutes.all('/', function (req, res, next) {
   res.redirect('http://localhost:4200');
 })
 app.use('/', fronEndRoutes)
@@ -121,10 +124,17 @@ apiRoutes.post('/save-user', function (req, res, next) {
   users.saveUser(req, res, next)
 })
 
-apiRoutes.post('/save-file', function (req, res, next) {
-  users.saveFile(req, res, next)
+apiRoutes.get('/auth-signin/:code', function (req, res) {
+  // console.log(req.params.code)
+  users.authSignin(req, res)
+  // res.redirect('http://localhost:4200')
+  
 })
 
+apiRoutes.post('/save-file', function (req, res, next) {
+  users.saveFile(req, res, next)
+
+})
 
 apiRoutes.use(function (req, res, next) {
   users.verifyUsers(req, res, next)
@@ -134,19 +144,22 @@ apiRoutes.post('/delete-file', function (req, res, next) {
   users.deleteFile(req, res, next)
 })
 
+apiRoutes.post('/post-sponsor-request', function (req, res) {
+  users.saveSponceRequest(req, res)
+})
+
 apiRoutes.get('/get-users', function (req, res, next) {
   users.getAllUsers(req, res, next)
 })
 
-
-
 apiRoutes.get('/', function (req, res, next) {
   try {
-    res.json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId })
+    res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId })
+    // next()
   } catch (error) {
-    res.json({message: 'Could not get this address'})
+    res.status(500).json({ message: 'Could not get this address' })
+    // next()
   }
-  
 })
 
 app.use('/api', apiRoutes)
@@ -190,7 +203,7 @@ io.on('connection', (socket) => {
 
 //  ****************************************************************************************************
 
-var port = 1983
+const port =  1983
 server.listen(port, err => {
   if (err) {
     gLog(err, 'cannot use port: ' + port)
@@ -198,3 +211,4 @@ server.listen(port, err => {
   }
   gLog('ok', 'server is listening on port: ' + port)
 })
+

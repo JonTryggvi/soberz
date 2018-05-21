@@ -15,7 +15,7 @@ import { ChatService } from './chat.service';
 import { DataService } from './data.service';
 import { FileUploadService } from './file-upload.service';
 import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './home/login/login.component';
+import { LoginComponent, AlertComponent } from './home/login/login.component';
 import { SignupComponent } from './home/signup/signup.component';
 import { MaterialModule } from './material.module';
 import { NotfoundComponent } from './notfound/notfound.component';
@@ -29,6 +29,8 @@ import { IAppState, rootReducer } from './store/store';
 import { UsersActions } from './users.actions';
 import { UsersEpic } from './users.epic';
 import { UsersService } from './users.service';
+import { MatSnackBar } from '@angular/material';
+import { ModalAddComponent, ModalAddOverlay } from './portal/components/modal-addSponsor/modalAdd.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,7 +44,11 @@ import { UsersService } from './users.service';
     UsertableComponent,
     ModalComponent,
     ModalOverlay,
-    ChatComponent
+    ChatComponent,
+    AlertComponent,
+    ModalAddComponent,
+    ModalAddOverlay
+
   ],
   imports: [
     BrowserModule,
@@ -53,9 +59,9 @@ import { UsersService } from './users.service';
     NgReduxRouterModule.forRoot(),
     HttpClientModule,
     FormsModule,
-    MaterialModule,
+    MaterialModule
   ],
-  entryComponents: [ModalOverlay],
+  entryComponents: [ModalOverlay, AlertComponent, ModalAddOverlay],
   providers: [AuthGuardService, AuthService, DataService, UsersActions, UsersService, UsersEpic, FileUploadService, ChatService],
   bootstrap: [AppComponent]
 })
@@ -71,7 +77,8 @@ export class AppModule {
       this.usersEpic.checkForToken,
       this.usersEpic.getAllUsers,
       this.usersEpic.saveUser,
-      this.usersEpic.updateUserByFieldName
+      this.usersEpic.updateUserByFieldName,
+      this.usersEpic.sendSponsorRequest
       // this.usersEpic.deleteUser,
       // this.usersEpic.createUser,
       // this.usersEpic.rateSitter

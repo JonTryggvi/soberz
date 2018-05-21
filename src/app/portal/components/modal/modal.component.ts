@@ -1,9 +1,11 @@
 import { NgRedux } from '@angular-redux/store';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { DataService } from '../../../data.service';
 import { IAppState } from '../../../store/store';
-import { UsertableComponent } from '../../userprofile/usertable/usertable.component';
+import { User } from '../../userprofile/usertable/usertable.component';
+import { UsersActions } from '../../../users.actions';
+import { AuthService } from '../../../auth.service';
 
 @Component({
   selector: 'app-modal',
@@ -12,53 +14,43 @@ import { UsertableComponent } from '../../userprofile/usertable/usertable.compon
 })
 
 export class ModalComponent implements OnInit {
+  @Input() data: User | any;
+  @Input() btnText;
   userData;
   userObj;
-  constructor(private ngRedux: NgRedux<IAppState>, public dialog: MatDialog, private usertableComponent: UsertableComponent, private dataService: DataService) { 
-
+  constructor(private ngRedux: NgRedux<IAppState>, public dialog: MatDialog, private dataService: DataService) { 
+ 
   }
 
-  openDialog(obj): void {
+  openDialog(data): void {
+    console.log('x');
+    
     let dialogRef = this.dialog.open(ModalOverlay, {
       width: '250px',
-      data: obj
+      data: data
     });
   }
 
   ngOnInit() {
-    this.dataService.currentData.subscribe(data => {
-      this.userObj = data;
-      console.log(data);
-      
-      if (data.id) {
-        this.openDialog(this.userObj);
-        return;
-      }
-      // this.openDialog(this.userObj);
-
-    });
-    // we acomplish this with redux
-    // this.usertoDelete = this.ngRedux.select(state => state.users);
-    // this.usertoDelete.subscribe(x => {
-    //   // console.log(x);
-    //   if (x) {
-    //     console.log(x);
-    //     //  this.openDialog(x);
-    //   }
-    // });
+  
   }
  
-
 }
 @Component({
   selector: 'modal-overlay',
   templateUrl: 'modal-overlay.html',
+  styleUrls: ['./modal.component.scss']
 })
 export class ModalOverlay {
 
   constructor(
     public dialogRef: MatDialogRef<ModalOverlay>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { }
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private usersActions: UsersActions,
+    private authService: AuthService,
+    
+    
+  ) { }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -66,6 +58,10 @@ export class ModalOverlay {
 
   deleteThisUser(userId) {
     // redux action to delete user
+    this.usersActions.updateUserByField(0, 'activated', userId);
+    // this.usersActions.getAllUsers(this.authService.isToken);
+   
+    this.dialogRef.close();
   }
 
 }

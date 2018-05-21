@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Get sponsor?</h1>
+<div mat-dialog-content>
+  <p>You want to ask {{data.firstname}} to be your sponsor? </p>
+  <p>Great!</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button color="primary" (click)="ask(data.id, loggedInUserId)" cdkFocusInitial>Ask {{data.firstname}}</button>
+</div>

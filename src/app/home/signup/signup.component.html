@@ -39,12 +39,13 @@
     </mat-card>
     <mat-card>
       <mat-form-field>
-        <input type="text" matInput placeholder="Enter your mobile number" formControlName="tel" [(ngModel)]="valueTel" >
+        <input type="text" matInput placeholder="Enter your mobile number" formControlName="tel" [(ngModel)]="valueTel"  (keyup)="valueTel.length && valueTel.length >=6 ? checkNumber(valueTel) : ''" required>
         <button mat-button *ngIf="valueTel" matSuffix mat-icon-button aria-label="Clear" (click)="valueTel=''">
           <mat-icon>close</mat-icon>
         </button>
-        <mat-error *ngIf="signinForm.controls.tel.value.length > 0 && !signinForm.controls.tel.value.includes('+45') ">{{fixNumber()}}</mat-error>
+        <mat-error *ngIf="signinForm.controls.tel.invalid">{{fixNumber()}}</mat-error>
         <!-- {{signinForm.status | json}} -->
+        <!-- {{signinForm.controls.tel.invalid}} -->
       </mat-form-field>
 
       <mat-form-field>

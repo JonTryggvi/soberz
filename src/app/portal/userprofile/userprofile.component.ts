@@ -22,10 +22,8 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   subscription: Subscription
   public profileUser: User;
   public profileUsers: User[];
-  displayedColumns = ['name', 'sponsors', 'sponsees'];
   userImg;
   updateImg;
-  oldImg;
   firstNameEditMode: boolean;
   lastNameEditMode: boolean;
   usernameEditMode: boolean;
@@ -41,8 +39,9 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   jChuckNorris: any;
   serverPath: String;
   profileImg: String;
+  localImg: String;
   ngOnDestroy(): void { //remember to use this on all subscriptions
-    this.subscription.unsubscribe();
+    // this.subscription.unsubscribe();
   }
 
   constructor(private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) { }
@@ -54,31 +53,31 @@ export class UserprofileComponent implements OnInit, OnDestroy {
       // console.log(data);
       this.jChuckNorris = data;
     });
+
+    
     
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       // console.log(users.soberUsers);
       // console.log(this.authService.isToken);
      
-      if (users && users.soberUsers.length > 0 ) {
+      if (users && users.soberUsers.length > 0) {
         this.profileUsers = users.soberUsers;
         // console.log(this.profileUsers);
         let aUsers = users.soberUsers.filter(x => {
           // console.log(typeof this.paramId);
-          
-         
           return Number(x.id) === this.paramId;
         });
    
         this.profileUser = aUsers[0];
-        this.profileImg = this.profileUser['userImg'].imgPath
+        // console.log(this.profileUser.userImg.imgPath);
+        
+        this.profileImg = this.profileUser.userImg.imgPath;
         this.tabHeader = 'Here you can edit your profile ' + this.profileUser.username;
         // this.setUserAvatar();
         // console.log(this.profileUser['userImg'].imgId);
         this.theSponsor = this.profileUser.sponsor === 1 || this.profileUser.sponsor === 'true' || this.profileUser.sponsor === true ? true : false;
         // console.log(this.theSponsor);
-        this.oldImg = this.profileUser['userImg'].imgPath;
-        console.log(this.profileImg); 
-        console.log(this.oldImg); 
+
       }
     });
     this.chatService.getOnlineUsers().subscribe((activeUser) => { 
@@ -93,9 +92,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
       this.loggedInUserId.splice(this.loggedInUserId.findIndex(e => e.socketId === socketId), 1);
       // console.log(this.loggedInUserId);
     }); 
-
   }
-
 
   editUser(bool, inputName) {
     switch (inputName) {
@@ -128,29 +125,39 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     }
   }
   submit(inpValue, inpName) {
+    console.log(inpValue);
+    
     this.usersActions.updateUserByField(inpValue, inpName, this.paramId);
     this.firstNameEditMode = false;
     this.editUser(false, inpName);    
+    // this.deleteFile();
   }
 
-  handleFileInput(files: FileList, inpName) {
-    this.fileToUpload = files.item(0);
-  
-    this.fileUploadService.postFile(this.fileToUpload).subscribe(data => {
+  deleteFile() {
+    this.usersService.deleteFile(this.profileImg, this.authService.isToken).subscribe(delfile => delfile);
+ 
+  }
+
+  handleFileInput(files, inpName) {
+    this.fileToUpload = files.target.files.item(0);
+   
+    this.fileUploadService.postFile(this.fileToUpload, this.profileImg).subscribe(data => {
       let jUserImg = `{ "imgPath":  "${data.imgPath}", "imgId": "${data.imgId}" }`;
       this.submit(jUserImg, inpName);
-      // this.editUser(false, inpName);
-  
-      this.usersService.deleteFile(this.oldImg, this.authService.isToken).subscribe(deldata => console.log('deldata'+deldata));
-      this.oldImg = '';
+      
+      if (files.target.files && files.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = (event: any) => {
+          console.dir(event.target);
+          this.localImg = event.target.result;
+        }
+        reader.readAsDataURL(files.target.files[0]);
+      }
     }, error => {
       console.log(error);
     });
   }
 
-  // testHttp() {
-  //   this.usersService.deleteFile(this.oldImg).subscribe(deldata => console.log(deldata));
-  // }
 
   checkSponsor(response) {
     // console.log(response);
@@ -158,7 +165,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   }
 
   setUserAvatar() {
-    return this.dataService.serverPath + this.profileUser['userImg'].imgPath;
+    return this.dataService.serverPath + this.profileUser.userImg.imgPath;
   }
  
   //  console.log(users.soberUsers);

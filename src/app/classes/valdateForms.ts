@@ -1,19 +1,18 @@
 import { FormControl } from '@angular/forms';
 
+
 export class ValidateForms {
 
   static getMobileValidator() {
     return function mobileValidator(control: FormControl): { [s: string]: boolean } {
-
- 
-      if (!control.value.match(/^[a-zA-Z0-9\-().\s]{10,15}$/))
-      { /// ^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,16}$/
-        return { invalidPassword: true };
+      if (control.value && !control.value.match(/^(\+|\d)[0-9]{7,16}$/) )
+      { // && !control.value.match(/^[a-zA-Z0-9\-().\s]{10,15}$/)
+        return { invalidMobile: true };
       }
-
       return null;
     };
   }
+
   static getPasswordValidator() {
     return function passwordValidator(control: FormControl): { [s: string]: boolean } {
       

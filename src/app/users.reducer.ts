@@ -7,6 +7,15 @@ const INITIAL_STATE: UsersState = UsersService.getInitialUsersState();
 
 export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
   switch (action.type) {
+    case UsersActions.SEND_SPONSORSHIP_REQUEST:
+      return state;
+    case UsersActions.SEND_SPONSORSHIP_REQUEST_SUCCESS:
+      console.log(action.payload);
+        
+      return state;
+    case UsersActions.SEND_SPONSORSHIP_REQUEST_ERROR:
+      console.log(action.payload);  
+      return state;  
     case UsersActions.UPDATE_USER_BY_FIELD:
       return state;
     case UsersActions.UPDATE_USER_BY_FIELD_SUCCESS:
@@ -14,12 +23,30 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       // console.log(state);
       let upDateUserState = [...state.soberUsers ]
       const jUserFromServer = action.payload.updatedData
-      let userToUPdateState = upDateUserState.filter(x => x.id === jUserFromServer.userId ? x[jUserFromServer.name] = jUserFromServer.value : x.firstname);
+      console.log(jUserFromServer);
+      
+      let userToUPdateState = upDateUserState.filter(x => {
+        let changeNameFromServer = jUserFromServer.name;
+        let changValueFromServer = jUserFromServer.value;
+        switch (jUserFromServer.name) {
+          case 'user_role':
+            changeNameFromServer = 'role';
+            changValueFromServer = jUserFromServer.value == 1 ? 'Admin' : 'User';
+            break;
+          default:
+            // changeNameFromServer = jUserFromServer.name;
+            // changValueFromServer = jUserFromServer.value;
+            break;
+        }
+         
+        
+        return x.id === jUserFromServer.userId ? x[changeNameFromServer] = changValueFromServer : x.firstname
+      });
       
       
       console.log(userToUPdateState);
       
-      return tassign(state, { soberUsers: upDateUserState});  
+      return tassign(state, { soberUsers: userToUPdateState});  
     case UsersActions.UPDATE_USER_BY_FIELD_ERROR:
       return state;  
   
@@ -50,13 +77,16 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       loginState.userId = Number(jPayload.response.id)
       loginState.userRole = jPayload.response.role_name;
       loginState.token = jPayload.token;
-      loginState.validToken = 'ok'
-      
+      loginState.validToken = 'ok';
+      loginState.activated = jPayload.response.activated;
+      loginState.loggInSuccess = true;
       
       return tassign(state, loginState);  
     case UsersActions.LOG_IN_FAILED:
-      // console.log(action.payload);
-      return state;
+      let newLogginFailed = { ...state };
+      newLogginFailed.loggInSuccess = false;
+      console.log(action.payload);
+      return tassign(state, newLogginFailed);
     
     case UsersActions.CHECK_TOKEN:
       return state;  
@@ -80,8 +110,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
     case UsersActions.GET_ALL_USERS: 
       return state;
     case UsersActions.GET_ALL_USERS_SUCCESS:
-      console.log(action.payload);
-      
+      // console.log(action.payload);
       let ajUsers = action.payload.map((s, i) => {
         s.sponsors = JSON.parse(s.sponsors);
         s.sponsees = JSON.parse(s.sponsees);
