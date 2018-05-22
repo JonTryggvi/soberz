@@ -5,7 +5,6 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "dev": "nodemon server.js",
     "build": "ng build  — env=prod",
     "test": "ng test",
     "lint": "ng lint",
@@ -52,7 +51,6 @@
     "express-fileupload": "^0.4.0",
     "express-formidable": "^1.0.0",
     "formidable": "^1.2.1",
-    "fsevents": "^1.2.3",
     "jsonwebtoken": "^8.2.1",
     "mongodb": "^3.1.0-beta4",
     "morgan": "^1.9.0",
@@ -61,6 +59,9 @@
     "nodemon": "^1.17.4",
     "socket.io": "^2.1.0",
     "sqlite3": "4.0.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.2.3"
   },
   "devDependencies": {
     "@angular/cli": "1.7.4",
