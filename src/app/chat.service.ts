@@ -11,7 +11,7 @@ import { DataService } from './data.service';
 
 @Injectable()
 export class ChatService {
-  private url =  JSON.stringify(this.dataService.serverPath) +':3000';
+  private url =  this.dataService.serverPath + this.dataService.chatPort;
   private socket;    
 
   // public messages: Subject<Message>;

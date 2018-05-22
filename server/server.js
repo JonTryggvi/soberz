@@ -6,7 +6,7 @@ const http = require('http')
 const server = http.Server(app)
 var path = require('path');
 const socketIO = require('socket.io')
-const io = socketIO(3000)
+const io = socketIO(1984)
 
 const sqlite3 = require('sqlite3')
 

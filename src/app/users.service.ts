@@ -15,26 +15,27 @@ export class UsersService {
   sendSponsorshipRequest(payload) {
     console.log(payload);
     
-    return this.http.post(this.dataService.serverPath + '/api/post-sponsor-request', payload, { responseType: 'json' });
+    return this.http.post(this.dataService.serverPath + this.dataService.serverPort + '/api/post-sponsor-request', payload, { responseType: 'json' });
+  
   }
 
   updateUserByField(inpVal, inpName, userId) {
     const updateData = { value: inpVal, name: inpName, userId: userId };
     // console.log(updateData);
-    return this.http.put(this.dataService.serverPath + '/api/update-user-field', updateData, { responseType: 'json' });
+    return this.http.put(this.dataService.serverPath + this.dataService.serverPort + '/api/update-user-field', updateData, { responseType: 'json' });
   }
 
   // isLoggedIn = this.authService.isLoggedIn;
   getGender(): Observable<any>  {
-    return this.http.get(this.dataService.serverPath + '/api/get-genders').map(res => res);
+    return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api/get-genders').map(res => res);
   }
   
   saveUser(formObject: User) { 
-    return this.http.post(this.dataService.serverPath + '/api/save-user', formObject, { responseType: 'text' });
+    return this.http.post(this.dataService.serverPath + this.dataService.serverPort +'/api/save-user', formObject, { responseType: 'text' });
   }
 
   deleteFile(filePath, token): Observable<any> {
-    const endpoint = `${this.dataService.serverPath}/api/delete-file`;
+    const endpoint = `${this.dataService.serverPath+this.dataService.serverPort }/api/delete-file`;
     const formData = { filePath, token };
     // console.log(formData);
     return this.http.post(endpoint, formData, { responseType: 'json' }).map(res => res);
@@ -48,9 +49,9 @@ export class UsersService {
         })
       };
 
-      return this.http.get(this.dataService.serverPath + '/api?userId='+ userId, httpOptions);
+      return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api?userId='+ userId, httpOptions);
     } else {
-      return this.http.get(this.dataService.serverPath + '/api', { responseType: 'json' });
+      return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api', { responseType: 'json' });
     }
     
   } 
@@ -62,7 +63,7 @@ export class UsersService {
         'x-access-token': token
       })
     };
-    return this.http.get(this.dataService.serverPath + '/api/get-users', httpOptions);
+    return this.http.get(this.dataService.serverPath + this.dataService.serverPort +'/api/get-users', httpOptions);
   }
 
   getCucky(): Observable<any> {

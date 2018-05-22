@@ -10,7 +10,9 @@ export class DataService {
   // private dataSource = new BehaviorSubject<any>({});
   // currentData = this.dataSource.asObservable();
   thisUser;
-  serverPath = JSON.stringify(window.location);
+  serverPort = ':1983';
+  chatPort = ':1984';
+  serverPath = 'http://localhost';
   
   constructor(private ngRedux: NgRedux<IAppState>) {
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {

@@ -11,7 +11,7 @@ export class FileUploadService {
   constructor(private http: HttpClient, private dataService: DataService) { }
 
   postFile(fileToUpload: File, oldFile): Observable<any> {
-    const endpoint = this.dataService.serverPath + '/api/save-file';
+    const endpoint = this.dataService.serverPath + this.dataService.serverPort + '/api/save-file';
     const formData: FormData = new FormData();
     formData.append('userImg', fileToUpload, fileToUpload.name);
     formData.append('oldFile', oldFile);

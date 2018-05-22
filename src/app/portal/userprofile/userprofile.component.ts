@@ -54,7 +54,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit(): void {
-    this.serverPath = this.dataService.serverPath;
+    this.serverPath = this.dataService.serverPath + this.dataService.serverPort;
     this.usersService.getCucky().subscribe(data => {
       // console.log(data);
       this.jChuckNorris = data;
@@ -175,9 +175,6 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     this.theSponsor = response;
   }
 
-  setUserAvatar() {
-    return this.dataService.serverPath + this.profileUser.userImg.imgPath;
-  }
  
   //  console.log(users.soberUsers);
 }
