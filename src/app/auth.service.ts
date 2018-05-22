@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DataService } from './data.service';
 
 @Injectable()
 export class AuthService {
@@ -36,11 +37,11 @@ export class AuthService {
     this.setLocalStorage(id, token, validToken);
   }
    
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private dataService: DataService) { }
 
   authServiselogIn(loginForm) {
     // console.log(loginForm);
-    return this.http.post('http://localhost:1983/api/auth-user', loginForm, { responseType: 'json' });
+    return this.http.post(this.dataService.serverPath + '/api/auth-user', loginForm, { responseType: 'json' });
   } 
 
 }
