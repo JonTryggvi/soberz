@@ -211,7 +211,7 @@ io.on('connection', (socket) => {
 
 //  ****************************************************************************************************
 
-const port = process.env.PORT || 1983
+const port = process.env.PORT || 3434
 
 server.listen(port, err => {
   if (err) {
