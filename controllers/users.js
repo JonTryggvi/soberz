@@ -133,7 +133,7 @@ jUser.saveFile = function (req, res, next) {
     const file_ext = req.files.userImg.name.split('.').pop()
     const index = old_path.lastIndexOf('/') + 1
     const file_name = old_path.substr(index)
-    const new_path = path.join(process.env.PWD, '/dist/uploads/img/', file_name + '.' + file_ext)
+    const new_path = path.join(process.env.PWD, '/uploads/img/', file_name + '.' + file_ext)
     const prevFile = req.fields.oldFile
     // console.log(prevFile);
 
@@ -155,7 +155,7 @@ jUser.saveFile = function (req, res, next) {
             });
           }
           res.status(200);
-          const imgPath = '/dist/uploads/img/' + file_name + '.' + file_ext
+          const imgPath = '/uploads/img/' + file_name + '.' + file_ext
           return res.json({ 'success': true, 'imgPath': imgPath, 'imgId': file_name });
           next()
         });

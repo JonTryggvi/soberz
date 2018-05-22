@@ -14,6 +14,7 @@ import { ChatService } from '../../chat.service';
 export class SideNavComponent implements OnInit {
   public text: String;
   userId;
+  opened;
   constructor(private eRef: ElementRef, private usersActions: UsersActions, private authService: AuthService, private chatServive: ChatService) { }
   
   logOut() {
