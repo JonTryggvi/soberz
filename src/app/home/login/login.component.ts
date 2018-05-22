@@ -18,6 +18,10 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
+  mobPass;
+  value;
+  valuePass;
+  checkNumber;
   loginForm: FormGroup;
   loginFormSms: FormGroup;
   isLoggedin: boolean;

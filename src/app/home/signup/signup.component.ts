@@ -22,7 +22,9 @@ export class SignupComponent implements OnInit, OnDestroy {
   fileToUpload: File = null;
   apiSubscribe: Subscription;
   validApiNumber: String = '';
-
+  value;
+  value2;
+  valuePass;
 
   handleFileInput(files: FileList) {
     this.fileToUpload = files.item(0);
