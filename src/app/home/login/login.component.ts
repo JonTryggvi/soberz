@@ -51,36 +51,27 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (loginForm.valid) {
       // console.log(loginForm);
       this.usersActions.logIn(loginForm.value);
-
     }
   }
 
  
   ngOnInit() {
   
-    
-  
-    this.alive = false;
     this.reduxSubscribe = this.ngRedux.select(state => state.users).subscribe(res => {
-      console.log('res', res);
+      
       
       if (res.token || res.validToken === 'ok' && res.activated === 1) {
+        console.log('res', res);
         const id = Number(res.userId);
         this.authService.setLocalStorage(id, res.token, res.validToken);
         this.router.navigate(['/portal/user-profile/'+res.userId]);
       }
       this.loginSuccess = res.loggInSuccess;
       if (res.loggInSuccess == false) {
-      
-          this.snackBar.openFromComponent(AlertComponent, {
-            duration: 10000,
-          });
-       
+        this.snackBar.openFromComponent(AlertComponent, {
+          duration: 10000,
+        });
       }
-      // if (this.authService.isTokenValid === 'ok' ) {
-      //   this.router.navigate(['/portal']);
-      // }
-   
     });
    
     

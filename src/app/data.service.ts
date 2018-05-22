@@ -10,7 +10,7 @@ export class DataService {
   // private dataSource = new BehaviorSubject<any>({});
   // currentData = this.dataSource.asObservable();
   thisUser;
-  serverPath = 'http://localhost:1983';
+  serverPath = 'http://18.216.169.68';
   
   constructor(private ngRedux: NgRedux<IAppState>) {
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {

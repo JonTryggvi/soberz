@@ -100,7 +100,8 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       validState.token = action.payload.token;
       return tassign(state, validState);
       case UsersActions.CHECK_TOKEN_INVALID:
-      // console.log(action.payload);
+      console.log(action.payload);
+
       return state;  
     
     case UsersActions.LOG_OUT:

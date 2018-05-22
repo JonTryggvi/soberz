@@ -1,6 +1,6 @@
 import { NgRedux } from '@angular-redux/store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../auth.service';
 import { User } from '../../classes/user';
@@ -44,8 +44,14 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     // this.subscription.unsubscribe();
   }
 
-  constructor(private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) { }
+  constructor(private router: Router, private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) { }
   paramId = Number(this.route.snapshot.paramMap.get('id'));
+  logOut() {
+    this.usersActions.logOut();
+    this.authService.setLocalStorage(null, undefined, undefined);
+    // location.replace('/');
+    this.router.navigate(['/home/login']);
+  }
   
   ngOnInit(): void {
     this.serverPath = this.dataService.serverPath;
@@ -54,11 +60,16 @@ export class UserprofileComponent implements OnInit, OnDestroy {
       this.jChuckNorris = data;
     });
 
-    
-    
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       // console.log(users.soberUsers);
       // console.log(this.authService.isToken);
+      // console.log(users);
+      
+      if (users.validToken === 'Failed to authenticate token.' || users.validToken === '') {
+        this.logOut();
+        console.log('x');
+        // return false;
+      }
      
       if (users && users.soberUsers.length > 0) {
         this.profileUsers = users.soberUsers;

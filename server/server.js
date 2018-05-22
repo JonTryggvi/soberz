@@ -4,20 +4,21 @@ const express = require('express')
 const app = express()
 const http = require('http')
 const server = http.Server(app)
-
+var path = require('path');
 const socketIO = require('socket.io')
 const io = socketIO(3000)
 
-const chalk = require('chalk')
 const sqlite3 = require('sqlite3')
+
 global.formidable = require('express-formidable')
 app.use(formidable())
 
+global.chalk = require('chalk')
 global.db = new sqlite3.Database(__dirname + '/data.db')
 global.config = require('./config'); // get our config file
 global.gFs = require('fs')
 global.crypto = require('crypto');
-global.serverpath = 'http://localhost:1983/'
+global.serverpath = 'http://localhost:1980'
 // app.use(fileUpload())
 
 app.set('superSecret', config.secret)
@@ -95,27 +96,39 @@ app.use(function (req, res, next) {
 }); 
 
 //  ****************************************************************************************************
+let parentPath = path.join(__dirname, '../')
+app.use('/uploads', express.static(__dirname + '/uploads'))
+// app.use(express.static(parentPath))
+// console.log(path.basename);
+
+//  ****************************************************************************************************
 
 const fronEndRoutes = express.Router()
-// console.log(__dirname );
+console.log(parentPath + 'index.html');
 
-app.use( '/uploads', express.static(__dirname + '/uploads' ))
-
-fronEndRoutes.all('/', function (req, res, next) {
-  res.redirect('http://localhost:4200');
+fronEndRoutes.get('/', function (req, res, next) {
+  res.redirect('http://localhost:4200')
+  // res.sendFile(parentPath + 'index.html')
+  next()
 })
 app.use('/', fronEndRoutes)
 
 //  ****************************************************************************************************
 
 const apiRoutes = express.Router()
+// update user by choosed field on client side
 apiRoutes.put('/update-user-field', function (req, res, next) {
   users.updateUserbyField(req, res, next);
+})
+
+apiRoutes.get('/test', function (req, res) {
+  res.send('<p>hi</p>');
 })
 
 apiRoutes.post('/auth-user', function (req, res, next) {
   users.logInUser(req, res, next)
 })
+
 apiRoutes.get('/get-genders', function (req, res, next) {
   users.getGenders(req, res, next)
 })
@@ -124,11 +137,9 @@ apiRoutes.post('/save-user', function (req, res, next) {
   users.saveUser(req, res, next)
 })
 
+// user has signed up but needs to activate him/her self by either clicking a link in sms or email
 apiRoutes.get('/auth-signin/:code', function (req, res) {
-  // console.log(req.params.code)
   users.authSignin(req, res)
-  // res.redirect('http://localhost:4200')
-  
 })
 
 apiRoutes.post('/save-file', function (req, res, next) {
@@ -182,11 +193,8 @@ io.on('connection', (socket) => {
         activeUserId: activeUserId,
         socketId: socket.id
       }
-      
       console.log(socketInfo)
       io.emit('userActive', socketInfo)
-
-   
     })
 
     socket.on('disconnect', function () {
@@ -203,7 +211,8 @@ io.on('connection', (socket) => {
 
 //  ****************************************************************************************************
 
-const port =  1983
+const port = 1983
+
 server.listen(port, err => {
   if (err) {
     gLog(err, 'cannot use port: ' + port)

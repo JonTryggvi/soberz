@@ -28,8 +28,8 @@ export class PortalComponent implements OnInit {
       // console.log(users.validToken);
       if (users.validToken === 'Failed to authenticate token.') {
         this.logOut();
-        // console.log('x');
-        return false;
+        console.log('x');
+        // return false;
       }
     });
     this.userId = this.authService.isUserIdValid;
