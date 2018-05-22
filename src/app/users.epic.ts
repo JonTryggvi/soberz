@@ -14,6 +14,21 @@ import { UsersService } from "./users.service";
 export class UsersEpic { 
   constructor(private userServise: UsersService, private authServise: AuthService) { }
 
+  sendSponsorRequest = (acton$: ActionsObservable<any>) => {
+    return acton$.ofType(UsersActions.SEND_SPONSORSHIP_REQUEST)
+      .mergeMap(({ payload }) => {
+        return this.userServise.sendSponsorshipRequest(payload)
+          .map((result) => ({
+            type: UsersActions.SEND_SPONSORSHIP_REQUEST_SUCCESS,
+            payload: result
+          }))
+          .catch(error => Observable.of({
+            type: UsersActions.SEND_SPONSORSHIP_REQUEST_ERROR,
+            payload: error
+          }));
+      });
+  }
+
   updateUserByFieldName = (action$: ActionsObservable<any>) => { 
     return action$.ofType(UsersActions.UPDATE_USER_BY_FIELD)
       .mergeMap(({ payload }) => {

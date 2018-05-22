@@ -7,10 +7,10 @@ import { IAppState } from './store/store';
 export class DataService {
 
   subscription;
-  private dataSource = new BehaviorSubject<any>({});
-  currentData = this.dataSource.asObservable();
+  // private dataSource = new BehaviorSubject<any>({});
+  // currentData = this.dataSource.asObservable();
   thisUser;
-  serverPath = 'http://localhost:1983';
+  serverPath = 'http://18.216.169.68';
   
   constructor(private ngRedux: NgRedux<IAppState>) {
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
@@ -19,10 +19,10 @@ export class DataService {
     });
   }
 
-  changeData(data: any, i) {
-    data.index = i;
-    this.dataSource.next(data);
-  }
+  // changeData(data: any, i) {
+  //   data.index = i;
+  //   this.dataSource.next(data);
+  // }
   static randomNumberId(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }

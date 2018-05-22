@@ -16,31 +16,22 @@ export class AppComponent implements OnInit {
   title = 'app';
   tokenIsValid;
   
-  constructor(private route: ActivatedRoute, private router: Router,private usersActions: UsersActions, private authService: AuthService, private ngRedux: NgRedux<IAppState>) {
+  constructor( private router: Router,private usersActions: UsersActions, private authService: AuthService, private ngRedux: NgRedux<IAppState>) {
     // console.log(this.authService.isToken);
-    var paramId = Number(this.route.snapshot.paramMap.get('id'));
-    
-    this.usersActions.checkToken(this.authService.isToken, this.authService.isUserIdValid);
+    // const paramId = Number(this.route.snapshot.paramMap.get('id'));
+    // console.log(this.authService.isToken);
+    if (this.authService.isToken !== 'undefined') {
+      this.usersActions.checkToken(this.authService.isToken, this.authService.isUserIdValid);
+    }
   }
   
   ngOnInit() {
     this.ngRedux.select(state => state.users).subscribe(res => {
       // console.log('res', res);
       if (res.validToken === 'ok') {
-        // console.log(this.authService.isUserIdValid);
-      
         this.authService.setLocalStorage(this.authService.isUserIdValid, res.token, res.validToken)
         this.router.navigate(['portal/user-profile/' + this.authService.isUserIdValid]);
       }
-      // this.usersActions.getToken(this.authService.isToken);
-      // this.isBaby = res.isBaby;
-
-
-      // if (this.authService.isLoggedIn) {
-      //   this.router.navigate(['portal']);
-      // }
-
     });
-   
   }
 }

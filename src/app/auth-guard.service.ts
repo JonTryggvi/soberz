@@ -17,7 +17,7 @@ export class AuthGuardService implements CanActivate {
   }
 
   checkLogin(url: string): boolean {
-    console.log('isLoggedIn ' + this.authService.isTokenValid);
+    console.log('isLoggedIn ', this.authService);
     if (this.authService.isTokenValid === 'ok') {
       // this.router.navigate(['/portal']);
       return true;

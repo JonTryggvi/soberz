@@ -11,6 +11,13 @@ import { UsersState } from './store/store';
 export class UsersService {
   
   constructor(private authService: AuthService, private http: HttpClient, private dataService: DataService) { }
+
+  sendSponsorshipRequest(payload) {
+    console.log(payload);
+    
+    return this.http.post(this.dataService.serverPath + '/api/post-sponsor-request', payload, { responseType: 'json' });
+  }
+
   updateUserByField(inpVal, inpName, userId) {
     const updateData = { value: inpVal, name: inpName, userId: userId };
     // console.log(updateData);
@@ -60,16 +67,27 @@ export class UsersService {
 
   getCucky(): Observable<any> {
     return this.http.get('https://api.chucknorris.io/jokes/random').map(res => res);
- }
+  }
+
+  getValidMobile(mobileNumber): Observable<any>{
+    const key = 'b31e196c08855083140b14e761452e1b';
+    
+    let url = `http://apilayer.net/api/validate?access_key=${key}&number=${mobileNumber}&country_code=DK`;
+    return this.http.get(url).map(res =>res)
+  }
+  
   static getInitialUsersState(): UsersState {
     return {
       userId: undefined,
       userRole: undefined,
       token: '',
       validToken: '',
+      activated: 0,
       soberUsers: [],
-
+      loggInSuccess: undefined
     };
   }
   
 }
+
+

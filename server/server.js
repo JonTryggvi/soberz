@@ -4,18 +4,21 @@ const express = require('express')
 const app = express()
 const http = require('http')
 const server = http.Server(app)
-
+var path = require('path');
 const socketIO = require('socket.io')
 const io = socketIO(3000)
 
-const chalk = require('chalk')
 const sqlite3 = require('sqlite3')
+
 global.formidable = require('express-formidable')
 app.use(formidable())
 
+global.chalk = require('chalk')
 global.db = new sqlite3.Database(__dirname + '/data.db')
 global.config = require('./config'); // get our config file
 global.gFs = require('fs')
+global.crypto = require('crypto');
+global.serverpath = 'http://localhost:1980'
 // app.use(fileUpload())
 
 app.set('superSecret', config.secret)
@@ -27,13 +30,13 @@ var sDatabasePath = 'mongodb://127.0.0.1:27017/'
 
 mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {   
   if (err) {
-    console.log(chalk.white.bgRed.bold('ERROR 003 -> Cannot connect to the database ' + sDataBaseName))
+    console.log(chalk.white.bgRed.bold('ERROR mongoDb -> Cannot connect to the database ' + sDataBaseName))
     return false
   }
   global.mongodb = client.db(sDataBaseName)
 
-  console.log(chalk.magenta.bgGreen('OK 002 -> Connected to the database ' + sDataBaseName))
-
+  console.log(chalk.black.bgGreen('OK 002 -> Connected to the database ' + sDataBaseName))
+  gLog('ok', 'OK mongoDb -> Connected to the database ' + sDataBaseName)
   return true
 }) 
 
@@ -41,12 +44,13 @@ mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {
 // console.log(process.argv);
 // var setup = () => {
 //   // console.log('SETTING VARIABLES')
-//   iHttpPort = process.argv[process.argv.indexOf('--HTTP') + 1]
-//   iHttpsPort = process.argv[process.argv.indexOf('--HTTPS') + 1]
+  // iHttpPort = process.argv[process.argv.indexOf('--HTTP') + 1]
+  // iHttpsPort = process.argv[process.argv.indexOf('--HTTPS') + 1]
 //   console.log(iHttpPort);
 
 // }
 // setup()
+
 // ****************************************************************************************************
 
 const users = require(__dirname + '/controllers/users.js')
@@ -57,16 +61,16 @@ const users = require(__dirname + '/controllers/users.js')
 global.gLog = (sStatus, sMessage) => {
   switch (sStatus) {
     case 'ok':
-      console.log(chalk.green(sMessage))  
+      console.log(chalk.black.bgGreen(sMessage))  
       break
     case 'err':
-      console.log(chalk.red(sMessage))
+      console.log(chalk.black.bgRed(sMessage))
       break 
     case 'ex':
       console.log(chalk.magenta(sMessage))
       break
     case 'info':
-      console.log(sMessage)
+      console.log(chalk.blue(sMessage))
       break
   }
 }
@@ -92,27 +96,39 @@ app.use(function (req, res, next) {
 }); 
 
 //  ****************************************************************************************************
+let parentPath = path.join(__dirname, '../')
+app.use('/uploads', express.static(__dirname + '/uploads'))
+// app.use(express.static(parentPath))
+// console.log(path.basename);
+
+//  ****************************************************************************************************
 
 const fronEndRoutes = express.Router()
-// console.log(__dirname );
-
-app.use( '/uploads', express.static(__dirname + '/uploads' ))
+console.log(parentPath + 'index.html');
 
 fronEndRoutes.get('/', function (req, res, next) {
-  res.redirect('http://localhost:4200');
+  res.redirect('http://localhost:4200')
+  // res.sendFile(parentPath + 'index.html')
+  next()
 })
 app.use('/', fronEndRoutes)
 
 //  ****************************************************************************************************
 
 const apiRoutes = express.Router()
+// update user by choosed field on client side
 apiRoutes.put('/update-user-field', function (req, res, next) {
   users.updateUserbyField(req, res, next);
+})
+
+apiRoutes.get('/test', function (req, res) {
+  res.send('<p>hi</p>');
 })
 
 apiRoutes.post('/auth-user', function (req, res, next) {
   users.logInUser(req, res, next)
 })
+
 apiRoutes.get('/get-genders', function (req, res, next) {
   users.getGenders(req, res, next)
 })
@@ -121,10 +137,15 @@ apiRoutes.post('/save-user', function (req, res, next) {
   users.saveUser(req, res, next)
 })
 
-apiRoutes.post('/save-file', function (req, res, next) {
-  users.saveFile(req, res, next)
+// user has signed up but needs to activate him/her self by either clicking a link in sms or email
+apiRoutes.get('/auth-signin/:code', function (req, res) {
+  users.authSignin(req, res)
 })
 
+apiRoutes.post('/save-file', function (req, res, next) {
+  users.saveFile(req, res, next)
+
+})
 
 apiRoutes.use(function (req, res, next) {
   users.verifyUsers(req, res, next)
@@ -134,19 +155,22 @@ apiRoutes.post('/delete-file', function (req, res, next) {
   users.deleteFile(req, res, next)
 })
 
+apiRoutes.post('/post-sponsor-request', function (req, res) {
+  users.saveSponceRequest(req, res)
+})
+
 apiRoutes.get('/get-users', function (req, res, next) {
   users.getAllUsers(req, res, next)
 })
 
-
-
 apiRoutes.get('/', function (req, res, next) {
   try {
-    res.json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId })
+    res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId })
+    // next()
   } catch (error) {
-    res.json({message: 'Could not get this address'})
+    res.status(500).json({ message: 'Could not get this address' })
+    // next()
   }
-  
 })
 
 app.use('/api', apiRoutes)
@@ -169,11 +193,8 @@ io.on('connection', (socket) => {
         activeUserId: activeUserId,
         socketId: socket.id
       }
-      
       console.log(socketInfo)
       io.emit('userActive', socketInfo)
-
-   
     })
 
     socket.on('disconnect', function () {
@@ -190,7 +211,8 @@ io.on('connection', (socket) => {
 
 //  ****************************************************************************************************
 
-var port = 1983
+const port = 1983
+
 server.listen(port, err => {
   if (err) {
     gLog(err, 'cannot use port: ' + port)
@@ -198,3 +220,4 @@ server.listen(port, err => {
   }
   gLog('ok', 'server is listening on port: ' + port)
 })
+

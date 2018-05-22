@@ -10,9 +10,10 @@ export class User {
   public mobile: String;
   public gender: Gender;
   public sponsor: String | number | boolean;
-  public imgUrl: String;
+  public userImg: any;
   public sponsees: any[];
   public sponsors: any[];
   public role: String;
   public online: String;
+  public activated: String;
 }

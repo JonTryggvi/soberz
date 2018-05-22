@@ -7,8 +7,10 @@ export class UsersState {
   userId: number;
   userRole: String;
   token: String;
+  activated: number;
   validToken: String;
   soberUsers: User[];
+  loggInSuccess: boolean;
 }
 export class IAppState {
   users?: UsersState;

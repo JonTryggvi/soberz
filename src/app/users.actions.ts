@@ -29,9 +29,18 @@ export class UsersActions {
   static UPDATE_USER_BY_FIELD: String = 'UPDATE_USER_BY_FIELD';
   static UPDATE_USER_BY_FIELD_SUCCESS: String = 'UPDATE_USER_BY_FIELD_SUCCESS';
   static UPDATE_USER_BY_FIELD_ERROR: String = 'UPDATE_USER_BY_FIELD_SUCCESS';
+  static SEND_SPONSORSHIP_REQUEST: String = 'SEND_SPONSORSHIP_REQUEST';
+  static SEND_SPONSORSHIP_REQUEST_SUCCESS: String = 'SEND_SPONSORSHIP_REQUEST_SUCCESS';
+  static SEND_SPONSORSHIP_REQUEST_ERROR: String = 'SEND_SPONSORSHIP_REQUEST_ERROR';
+
+  sendSponsor(sponsorId, userId, token) {
+    this.ngRedux.dispatch({
+      type: UsersActions.SEND_SPONSORSHIP_REQUEST,
+      payload: {sponsorId, userId, token}
+    })
+  }
 
   updateUserByField(inpVal, inpName, userId) {
-  
     this.ngRedux.dispatch({
       type: UsersActions.UPDATE_USER_BY_FIELD,
       payload: {inpVal, inpName, userId}

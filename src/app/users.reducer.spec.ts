@@ -26,7 +26,9 @@ describe('register reducer', () => {
       imgUrl: '',
       sponsees: [],
       sponsors: [],
-      role: 'User'
+      role: 'User',
+      about: 'about this user',
+      online: '123'
     }
     afterState.soberUsers.push(user);
     console.log('afterstate: ', afterState.soberUsers);

@@ -1,7 +1,7 @@
 import { CdkTableModule } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressSpinnerModule, MatSelectModule, MatSidenavModule, MatSlideToggleModule, MatSortModule, MatTableModule, MatTabsModule, MatToolbarModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressSpinnerModule, MatSelectModule, MatSidenavModule, MatSlideToggleModule, MatSortModule, MatTableModule, MatTabsModule, MatToolbarModule, MatSnackBarModule } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -24,6 +24,7 @@ import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, Mat
     MatSortModule,
     MatDialogModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
   exports: [
     MatFormFieldModule,
@@ -44,7 +45,8 @@ import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, Mat
     MatTableModule,
     MatSortModule,
     MatDialogModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule
 
   ]
 })

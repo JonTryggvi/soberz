@@ -4,8 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class AuthService {
 
-  isLocalLogSet = localStorage.loggedIn;
-  isLoggedIn = (typeof this.isLocalLogSet !== 'undefined' && this.isLocalLogSet !== null) ? JSON.parse(this.isLocalLogSet) : false;
+ 
   hasToken = '';
   // isLocalAdmSet = localStorage.admin;
   isAdmin; //= (typeof this.isLocalAdmSet !== 'undefined' && this.isLocalAdmSet !== null) ? JSON.parse(this.isLocalAdmSet) : false;
