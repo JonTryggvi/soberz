@@ -14,15 +14,17 @@ const sqlite3 = require('sqlite3')
 global.formidable = require('express-formidable')
 global.chalk = require('chalk')
 global.db = new sqlite3.Database(__dirname + '/data.db')
-const dbTest = new sqlite3.Database(__dirname + 'databasetest.db')
 global.config = require('./config'); // get our config file
 global.gFs = require('fs')
 global.crypto = require('crypto');
-global.serverpath = 'http://localhost:1980'
+
+global.port = 1983
+global.serverpath = 'http://localhost:' + port
+
 global.mongodb = null
 // app.use(fileUpload())
 app.use(formidable())
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/dist'))
 app.set('superSecret', config.secret)
 
 
@@ -214,7 +216,6 @@ io.on('connection', (socket) => {
 
 //  ****************************************************************************************************
 
-const port = 1983
 
 server.listen(port, err => {
   if (err) {

@@ -9,7 +9,7 @@ const fetch = require('node-fetch')
 let request = require('request');
 
 
-/*****************************************Async vs promise********************************************** */
+/*****************************************Async vs promise test********************************************** */
 
 function logFetch(url) {
   return fetch(url)
@@ -20,7 +20,7 @@ function logFetch(url) {
       gLog('err', err.messge)
     });
 }
-logFetch('https://api.chucknorris.io/jokes/random')
+// logFetch('https://api.chucknorris.io/jokes/random')
 
 async function logFetchAsync(url) {
   try {
@@ -34,7 +34,7 @@ async function logFetchAsync(url) {
   }
 }
 
-logFetchAsync('https://api.chucknorris.io/jokes/random')
+// logFetchAsync('https://api.chucknorris.io/jokes/random')
 
 
 /******************************************************************************************************* */
@@ -104,8 +104,8 @@ jUser.updateUserbyField = function (req, res, next) {
     
     db.run(stmt, params, function (err) {
       if (err) {
-        const jError = {status: 'failed', message: 'updateUserbyField query failed ' + err}
-        return res.json(jError)
+        const jError = { status: 'failed', message: 'updateUserbyField query failed ' + err }
+        return res.status(500).json(jError)
       }
       let dataValueChecked;
       if (isJson(dataValue)) {
@@ -114,12 +114,13 @@ jUser.updateUserbyField = function (req, res, next) {
         dataValueChecked = dataValue
       }
       const jSuccess = { status: 'ok', message: 'userfield: ' + columnName + ' has been updateed', updatedData: { name: columnName, userId: userId, value: dataValueChecked}}
-      return res.json(jSuccess)
-      // next()
+      return res.status(200).json(jSuccess)
+      next() // needed to work with the authentication 
     })
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> updateUserByField function' }
     gLog('err', err.message + ' -> ' + err.where)
+    return res.status(500).json(err)
   }
 }
 
@@ -167,7 +168,7 @@ jUser.saveFile = function (req, res, next) {
             });
           }
           res.status(200);
-          const imgPath = '/dist/uploads/img/' + file_name + '.' + file_ext
+          const imgPath = '/uploads/img/' + file_name + '.' + file_ext
           const success = { 'success': true, 'imgPath': imgPath, 'imgId': file_name }
           return res.json(success);
           next()
@@ -214,7 +215,7 @@ jUser.getAllUsers = function (req, res, next) {
       }
       gLog('ex', res.headersSent + ' getUsers function')
       return res.send(ajRows)
-      next()
+      next() // needed for auth headers
     })
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> getAllUsers function' }
@@ -301,7 +302,7 @@ jUser.verifyUsers = function (req, res, next) {
           req.token = token
           req.decoded = decoded
           req.userId = userId
-          next()
+          next() //needed for the auth process
         }
       });
 
@@ -358,8 +359,6 @@ jUser.saveUser = async function (req, res, next) {
             gLog('info', 'Preview URL: %s', nodemailer.getTestMessageUrl(info))
           })
         })
-
-
         sendSmsData(req, res, [code, jUserData.firstname])
 
         res.status(200)
@@ -375,7 +374,7 @@ jUser.saveUser = async function (req, res, next) {
      
     })
   } catch (error) {
-    const err = { message: error.message, where: ' controllers/users.js -> getGenders function' }
+    const err = { message: error.message, where: ' controllers/users.js -> saveUser function' }
     gLog('err', err.message + ' -> ' + err.where)
   }
 }
@@ -390,7 +389,7 @@ jUser.authSignin = function (req, res) {
       if (err) {
         return res.status(500).send(err)
       }
-      gLog('ok', 'test ' + dbResponse)
+      gLog('ok', 'user Activated' )
       return res.status(200).redirect('http://localhost:4200')
       
     })
@@ -413,7 +412,7 @@ jUser.saveSponceRequest = function (req, res) {
         gLog('err', jError.error + ' -> ' + jError.message);
         return res.status(500).json(jError)
       }
-      return res.send(dbData)
+      return res.status(200).send(dbData)
     })
     return
   } catch (error) {
