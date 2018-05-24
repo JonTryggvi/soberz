@@ -34,7 +34,7 @@ export class PortalComponent implements OnInit {
     });
     this.userId = this.authService.isUserIdValid;
     // if (this.userId) {
-      this.usersActions.getAllUsers(this.authService.isToken);
+    this.usersActions.getAllUsers(this.authService.isToken);
 
     // }
     

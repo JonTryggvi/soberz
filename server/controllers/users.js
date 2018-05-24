@@ -137,33 +137,43 @@ jUser.saveFile = function (req, res, next) {
     const prevFile = req.fields.oldFile
     // console.log(prevFile);
 
-    //  perhaps try with async await methood
+    //  perhaps try with async await or promise methood
     gFs.readFile(old_path, function (err, data) {
+      if (err) {
+        const error = { message: err.message, where: 'controllers/users.js -> saveFile entering callback hell' }
+        gLog('err', error.message + ' -> ' + error.where)
+        return false;
+      }
       gFs.writeFile(new_path, data, function (err) {
+        if (err) {
+          const error = { message: err.message, where: 'controllers/users.js -> saveFile -> writefile ' }
+          gLog('err', error.message + ' -> ' + error.where)
+          return false;
+        }
         gFs.unlink(old_path, function (err) {
           if (err) {
-            res.status(500)
-            return res.json({ 'success': false })
+            const error = {success: false, message: err.message, where: 'controllers/users.js -> saveFile -> writefile -> unlink' }
+            gLog('err', error.message + ' -> ' + error.where)
+            return res.status(500).json(error)
           } 
           if (prevFile && gFs.existsSync('.' + prevFile)) {
             gFs.unlink('.' + prevFile, (err) => {
               if (err) {
-                gLog('err', err)
-                return false
+                const error = { success: false, message: err.message, where: 'controllers/users.js -> saveFile -> writefile -> unlink -> unlink' }
+                gLog('err', error.message + ' -> ' + error.where)
+                return res.status(500).json(error)
               }
               return true
             });
           }
           res.status(200);
           const imgPath = '/dist/uploads/img/' + file_name + '.' + file_ext
-          return res.json({ 'success': true, 'imgPath': imgPath, 'imgId': file_name });
+          const success = { 'success': true, 'imgPath': imgPath, 'imgId': file_name }
+          return res.json(success);
           next()
         });
       });
     });
-
-
-
 
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> saveFile function' }
@@ -211,6 +221,7 @@ jUser.getAllUsers = function (req, res, next) {
     gLog('err', err.message + ' -> ' + err.where)
   } 
 } 
+
 jUser.getGenders = function (req, res) {
   try {
     const stmt = 'SELECT * FROM genders'
@@ -219,7 +230,7 @@ jUser.getGenders = function (req, res) {
         gLog('err', 'could not connect to the genders table')
         return true
       }
-      res.send(ajRows)
+      return res.send(ajRows)
     })
   }
   catch (error) {
@@ -227,6 +238,7 @@ jUser.getGenders = function (req, res) {
     gLog('err', err.message + ' -> ' + err.where)
   }
 }
+
 jUser.logInUser = function(req, res, next) {
   try {
     const password = req.fields.password //'123#$%'
