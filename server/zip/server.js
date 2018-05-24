@@ -6,49 +6,46 @@ const http = require('http')
 const server = http.Server(app)
 var path = require('path');
 const socketIO = require('socket.io')
-const io = socketIO(1984)
+const io = socketIO(44433)
 
 const sqlite3 = require('sqlite3')
 
-
 global.formidable = require('express-formidable')
-global.chalk = require('chalk')
+app.use(formidable())
+
+const chalk = require('chalk')
 global.db = new sqlite3.Database(__dirname + '/data.db')
-const dbTest = new sqlite3.Database(__dirname + 'databasetest.db')
 global.config = require('./config'); // get our config file
 global.gFs = require('fs')
 global.crypto = require('crypto');
-global.serverpath = 'http://localhost:1980'
-global.mongodb = null
+global.serverpath = 'http://localhost:1980' // change when we go live
 // app.use(fileUpload())
-app.use(formidable())
-app.use(express.static(__dirname + '/public'))
+
 app.set('superSecret', config.secret)
 
-
-
 const mongo = require('mongodb').MongoClient;
+global.mongodb = null
 var sDataBaseName = "socketChat"
-var sDatabasePath = 'mongodb://127.0.0.1:27017/' 
+var sDatabasePath = 'mongodb://127.0.0.1:27017/'
 
-mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {   
-  if (err) {
-    console.log(chalk.white.bgRed.bold('ERROR mongoDb -> Cannot connect to the database ' + sDataBaseName))
-    return false
-  }
-  global.mongodb = client.db(sDataBaseName)
+// mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {
+//   if (err) {
+//     console.log(chalk.white.bgRed.bold('ERROR mongoDb -> Cannot connect to the database ' + sDataBaseName))
+//     return false
+//   }
+//   global.mongodb = client.db(sDataBaseName)
 
-  
-  gLog('ok', 'OK mongoDb -> Connected to the database ' + sDataBaseName)
-  return true
-}) 
+//   console.log(chalk.black.bgGreen('OK 002 -> Connected to the database ' + sDataBaseName))
+//   gLog('ok', 'OK mongoDb -> Connected to the database ' + sDataBaseName)
+//   return true
+// })
 
 // server.setMaxListeners(100);
 // console.log(process.argv);
 // var setup = () => {
 //   // console.log('SETTING VARIABLES')
-  // iHttpPort = process.argv[process.argv.indexOf('--HTTP') + 1]
-  // iHttpsPort = process.argv[process.argv.indexOf('--HTTPS') + 1]
+// iHttpPort = process.argv[process.argv.indexOf('--HTTP') + 1]
+// iHttpsPort = process.argv[process.argv.indexOf('--HTTPS') + 1]
 //   console.log(iHttpPort);
 
 // }
@@ -64,11 +61,11 @@ const users = require(__dirname + '/controllers/users.js')
 global.gLog = (sStatus, sMessage) => {
   switch (sStatus) {
     case 'ok':
-      console.log(chalk.black.bgGreen(sMessage))  
+      console.log(chalk.black.bgGreen(sMessage))
       break
     case 'err':
       console.log(chalk.black.bgRed(sMessage))
-      break 
+      break
     case 'ex':
       console.log(chalk.magenta(sMessage))
       break
@@ -80,7 +77,7 @@ global.gLog = (sStatus, sMessage) => {
 
 //  ****************************************************************************************************
 // Add headers
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
 
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -95,23 +92,26 @@ app.use(function (req, res, next) {
   // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true);
   // Pass to next layer of middleware
-  next() 
-}); 
+  next()
+});
 
 //  ****************************************************************************************************
 
-
+app.use(express.static(__dirname + '/uploads'))
 // app.use(express.static(parentPath))
 // console.log(path.basename);
 
 //  ****************************************************************************************************
 
 const fronEndRoutes = express.Router()
+const sIndex = gFs.readFileSync(__dirname + '/uploads/index.html', 'utf8')
 
+console.log(sIndex);
+fronEndRoutes.get('/', function(req, res, next) {
+  //  res.redirect('https://cv.jontryggvi.is')
+  // res.send('<p>hi</p>');
 
-fronEndRoutes.get('/', function (req, res, next) {
-  res.redirect('http://localhost:4200')
-  // res.sendFile(parentPath + 'index.html')
+  res.send(sIndex)
   next()
 })
 app.use('/', fronEndRoutes)
@@ -120,58 +120,65 @@ app.use('/', fronEndRoutes)
 
 const apiRoutes = express.Router()
 // update user by choosed field on client side
-apiRoutes.put('/update-user-field', function (req, res, next) {
+apiRoutes.put('/update-user-field', function(req, res, next) {
   users.updateUserbyField(req, res, next);
 })
 
-apiRoutes.get('/test', function (req, res) {
+apiRoutes.get('/test', function(req, res) {
   res.send('<p>hi</p>');
 })
 
-apiRoutes.post('/auth-user', function (req, res, next) {
+apiRoutes.post('/auth-user', function(req, res, next) {
   users.logInUser(req, res, next)
 })
 
-apiRoutes.get('/get-genders', function (req, res, next) {
+apiRoutes.get('/get-genders', function(req, res, next) {
   users.getGenders(req, res, next)
 })
 
-apiRoutes.post('/save-user', function (req, res, next) {
+apiRoutes.post('/save-user', function(req, res, next) {
   users.saveUser(req, res, next)
 })
 
 // user has signed up but needs to activate him/her self by either clicking a link in sms or email
-apiRoutes.get('/auth-signin/:code', function (req, res) {
+apiRoutes.get('/auth-signin/:code', function(req, res) {
   users.authSignin(req, res)
 })
 
-apiRoutes.post('/save-file', function (req, res, next) {
+apiRoutes.post('/save-file', function(req, res, next) {
   users.saveFile(req, res, next)
 
 })
 
-apiRoutes.use(function (req, res, next) {
+apiRoutes.use(function(req, res, next) {
   users.verifyUsers(req, res, next)
 })
 
-apiRoutes.post('/delete-file', function (req, res, next) {
+apiRoutes.post('/delete-file', function(req, res, next) {
   users.deleteFile(req, res, next)
 })
 
-apiRoutes.post('/post-sponsor-request', function (req, res) {
+apiRoutes.post('/post-sponsor-request', function(req, res) {
   users.saveSponceRequest(req, res)
 })
 
-apiRoutes.get('/get-users', function (req, res, next) {
+apiRoutes.get('/get-users', function(req, res, next) {
   users.getAllUsers(req, res, next)
 })
 
-apiRoutes.get('/', function (req, res, next) {
+apiRoutes.get('/', function(req, res, next) {
   try {
-    res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId, status:'ok' })
+    res.status(200).json({
+      message: 'ok',
+      v: req.decoded,
+      token: req.token,
+      userId: req.userId
+    })
     // next()
   } catch (error) {
-    res.status(500).json({ message: 'Could not get this address', status: 'error' })
+    res.status(500).json({
+      message: 'Could not get this address'
+    })
     // next()
   }
 })
@@ -200,21 +207,21 @@ io.on('connection', (socket) => {
       io.emit('userActive', socketInfo)
     })
 
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function() {
       console.log(socket.id + ' disconnected')
       io.emit('disconnected', socket.id);
-   
+
     })
 
   } catch (error) {
-    gLog('err', 'Would not connect to socket: '+ error.message)
+    gLog('err', 'Would not connect to socket: ' + error.message)
   }
-  
+
 });
 
 //  ****************************************************************************************************
 
-const port = 1983
+const port = process.env.PORT || 8080
 
 server.listen(port, err => {
   if (err) {
@@ -223,6 +230,3 @@ server.listen(port, err => {
   }
   gLog('ok', 'server is listening on port: ' + port)
 })
-
-
-

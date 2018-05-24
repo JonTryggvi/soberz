@@ -11,30 +11,30 @@ let request = require('request');
 
 /*****************************************Async vs promise********************************************** */
 
-function logFetch(url) {
-  return fetch(url)
-    .then(response => response.json())
-    .then(text => {
-      gLog('info', text.value + chalk.black.bgGreen(' with PROMISE '));
-    }).catch(err => {
-      gLog('err', err.messge)
-    });
-}
-logFetch('https://api.chucknorris.io/jokes/random')
+// function logFetch(url) {
+//   return fetch(url)
+//     .then(response => response.json())
+//     .then(text => {
+//       gLog('info', text.value + chalk.black.bgGreen(' with PROMISE '));
+//     }).catch(err => {
+//       gLog('err', err.messge)
+//     });
+// }
+// logFetch('https://api.chucknorris.io/jokes/random')
 
-async function logFetchAsync(url) {
-  try {
-    const response = await fetch(url)
-    const jResponse = await response.json()
-    const sChuckyJodke = await jResponse.value
-    gLog('ex',sChuckyJodke + chalk.black.bgGreen(' with ASYNC '))
-  }
-  catch (err) {
-    gLog('err', err.message)
-  }
-}
+// async function logFetchAsync(url) {
+//   try {
+//     const response = await fetch(url)
+//     const jResponse = await response.json()
+//     const sChuckyJodke = await jResponse.value
+//     gLog('ex',sChuckyJodke + chalk.black.bgGreen(' with ASYNC '))
+//   }
+//   catch (err) {
+//     gLog('err', err.message)
+//   }
+// }
 
-logFetchAsync('https://api.chucknorris.io/jokes/random')
+// logFetchAsync('https://api.chucknorris.io/jokes/random')
 
 
 /******************************************************************************************************* */
@@ -133,7 +133,7 @@ jUser.saveFile = function (req, res, next) {
     const file_ext = req.files.userImg.name.split('.').pop()
     const index = old_path.lastIndexOf('/') + 1
     const file_name = old_path.substr(index)
-    const new_path = path.join(process.env.PWD, '/uploads/img/', file_name + '.' + file_ext)
+    const new_path = path.join(process.env.PWD, '/dist/uploads/img/', file_name + '.' + file_ext)
     const prevFile = req.fields.oldFile
     // console.log(prevFile);
 
@@ -155,7 +155,7 @@ jUser.saveFile = function (req, res, next) {
             });
           }
           res.status(200);
-          const imgPath = '/uploads/img/' + file_name + '.' + file_ext
+          const imgPath = '/dist/uploads/img/' + file_name + '.' + file_ext
           return res.json({ 'success': true, 'imgPath': imgPath, 'imgId': file_name });
           next()
         });
@@ -306,14 +306,14 @@ jUser.verifyUsers = function (req, res, next) {
   }
 }
 
-jUser.saveUser = async function (req, res, next) {
+jUser.saveUser = function (req, res, next) {
   try {
     const code = random4Digit();
     const jUserData = req.fields
     const sjUserImg = jUserData.userImg
     const aParams = [jUserData.firstname, jUserData.lastname, jUserData.username, jUserData.email, jUserData.tel, jUserData.gender, jUserData.isSponsor, sjUserImg, jUserData.password, time_format, code]
     stmt = 'INSERT INTO Users (firstname, lastname, username, email, mobile, gender, sponsor, imgUrl, password, date, code ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    db.run(stmt, aParams, async function (err, data) {
+    db.run(stmt, aParams, function (err, data) {
       
       try {
         nodemailer.createTestAccount((err, account) => {

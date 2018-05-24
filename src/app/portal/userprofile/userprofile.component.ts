@@ -19,7 +19,7 @@ import { ChatService } from '../../chat.service';
 
 export class UserprofileComponent implements OnInit, OnDestroy {
   tabHeader: String;
-  subscription: Subscription
+  subscription: Subscription;
   public profileUser: User;
   public profileUsers: User[];
   userImg;
@@ -51,6 +51,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     this.authService.setLocalStorage(null, undefined, undefined);
     // location.replace('/');
     this.router.navigate(['/home/login']);
+    return false;
   }
   
   ngOnInit(): void {
@@ -67,8 +68,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
       
       if (users.validToken === 'Failed to authenticate token.' || users.validToken === '') {
         this.logOut();
-        console.log('x');
-        // return false;
+        return false;
       }
      
       if (users && users.soberUsers.length > 0) {

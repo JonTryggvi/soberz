@@ -43,10 +43,12 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
         return x.id === jUserFromServer.userId ? x[changeNameFromServer] = changValueFromServer : x.firstname
       });
       
-      
+    
+
       console.log(userToUPdateState);
       
-      return tassign(state, { soberUsers: userToUPdateState});  
+      return tassign(state, { soberUsers: userToUPdateState }); 
+    
     case UsersActions.UPDATE_USER_BY_FIELD_ERROR:
       return state;  
   

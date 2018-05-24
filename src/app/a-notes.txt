@@ -1,1 +1,0 @@
-next to do is to connect to db and start the log in auth

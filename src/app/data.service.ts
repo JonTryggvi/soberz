@@ -13,7 +13,8 @@ export class DataService {
   serverPort = ':1983';
   chatPort = ':1984';
   serverPath = 'http://localhost';
-  
+  remoteServerPath = 'http://soberz-env.impgapztd4.us-east-2.elasticbeanstalk.com';
+
   constructor(private ngRedux: NgRedux<IAppState>) {
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       // console.log(users);

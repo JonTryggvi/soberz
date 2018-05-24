@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "mon": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,7 +17,6 @@
     "express-fileupload": "^0.4.0",
     "express-formidable": "^1.0.0",
     "formidable": "^1.2.1",
-    "fsevents": "^1.2.3",
     "jsonwebtoken": "^8.2.1",
     "moment": "^2.22.1",
     "mongodb": "^3.1.0-beta4",
@@ -26,7 +24,11 @@
     "node-fetch": "^2.1.2",
     "nodemailer": "^4.6.4",
     "nodemon": "^1.17.4",
+    "request": "^2.87.0",
     "socket.io": "^2.1.0",
     "sqlite3": "4.0.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.2.3"
   }
 }
