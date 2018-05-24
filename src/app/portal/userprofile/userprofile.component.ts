@@ -83,6 +83,8 @@ export class UserprofileComponent implements OnInit, OnDestroy {
         // console.log(this.profileUser.userImg.imgPath);
         
         this.profileImg = this.profileUser.userImg.imgPath;
+        console.log(this.profileImg);
+        
         this.tabHeader = 'Here you can edit your profile ' + this.profileUser.username;
         // this.setUserAvatar();
         // console.log(this.profileUser['userImg'].imgId);
