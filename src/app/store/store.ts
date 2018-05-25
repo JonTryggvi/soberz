@@ -11,6 +11,7 @@ export class UsersState {
   validToken: String;
   soberUsers: User[];
   loggInSuccess: boolean;
+  online: String;
 }
 export class IAppState {
   users?: UsersState;

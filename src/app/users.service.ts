@@ -65,6 +65,7 @@ export class UsersService {
     };
     return this.http.get(this.dataService.serverPath + this.dataService.serverPort +'/api/get-users', httpOptions);
   }
+  
 
   getCucky(): Observable<any> {
     return this.http.get('https://api.chucknorris.io/jokes/random').map(res => res);
@@ -85,7 +86,8 @@ export class UsersService {
       validToken: '',
       activated: 0,
       soberUsers: [],
-      loggInSuccess: undefined
+      loggInSuccess: undefined,
+      online: '0'
     };
   }
   

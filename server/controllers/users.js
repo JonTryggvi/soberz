@@ -216,6 +216,7 @@ jUser.getAllUsers = function (req, res, next) {
       gLog('ex', res.headersSent + ' getUsers function')
       return res.send(ajRows)
       next() // needed for auth headers
+  
     })
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> getAllUsers function' }
@@ -246,9 +247,13 @@ jUser.logInUser = function(req, res, next) {
     const email = req.fields.user //'jontryggvi@jontryggvi.is'
     
     // const stmt = "SELECT id, user_role, sponsor FROM Users WHERE email = ? AND password = ?"
-    const stmt = "SELECT Users.id, Users.activated, user_roles.role_name FROM Users INNER JOIN user_roles ON Users.user_role = user_roles.role_id  WHERE email = ? AND password = ?"
+    const stmt = "SELECT Users.id, Users.activated, Users.online, user_roles.role_name FROM Users INNER JOIN user_roles ON Users.user_role = user_roles.role_id  WHERE (email = $auth OR mobile = $auth) AND password = $pass"
+    const params = {
+      $auth: email,
+      $pass: password
+    }
 
-    db.get(stmt, [email, password], function (err, jRow) {
+    db.get(stmt, params, function (err, jRow) {
       gLog('ex', res.headersSent + ' before')
       // db.close()
       if (err) {
@@ -258,8 +263,7 @@ jUser.logInUser = function(req, res, next) {
         return res.json(sjError)
       }
       gLog('ex', res.headersSent + ' between')
-      if (jRow && jRow.activated) { 
-        
+      if (jRow && jRow.activated) {  
         const payload = {
           admin: true
         };
@@ -268,20 +272,49 @@ jUser.logInUser = function(req, res, next) {
         var token = jwt.sign(payload, secret, {
           expiresIn: "2h" // expires in 2 hours
         });
+       
+        
+        db.run('UPDATE Users SET online = ? WHERE Users.id = ?', [1, jRow.id], function (err) {
+          if (err) {
+            console.log(err);
+            return false
+          }
+        })
+
         const jRes = { message: 'ok', response: jRow, token: token }
         jUser.message = jRes
         return res.json(jRes)
-    
+        next()
         gLog('ex', res.headersSent + ' after')
       } else {
         const jRes = { message: 'no match or user is not authenticated', response: jRow }
         
         return res.status(500).json(jRes)
-
+        next()
       }
     })
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> logInUser function' }
+    gLog('err', err.message + ' -> ' + err.where)
+  }
+}
+
+jUser.logoutUser = function (req, res, next) {
+  try {
+    const userId = req.fields.id
+  
+    db.run('UPDATE Users SET online = ? WHERE Users.id = ?', [0, userId], function (err) {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({ status: 'failed' })
+      }
+     
+      return res.status(200).send({status:'ok', id: userId})
+      next()
+
+    })
+  } catch (error) {
+    const err = { message: error.message, where: 'controllers/users.js -> logoutUser function' }
     gLog('err', err.message + ' -> ' + err.where)
   }
 }
@@ -293,12 +326,14 @@ jUser.verifyUsers = function (req, res, next) {
     // console.log(userId);
     const token = req.fields.token || req.query.token || req.headers['x-access-token']
     // decode token
+    
     if (token) {
       // verifies secret and checks exp
       jwt.verify(token, jConfig.secret, function (err, decoded) {
         if (err) {
           return res.status(500).json({ success: false, message: 'Failed to authenticate token.' })
         } else {
+          gLog('ex', res.headersSent + ' logout function')
           req.token = token
           req.decoded = decoded
           req.userId = userId

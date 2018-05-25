@@ -33,11 +33,16 @@ export class AuthService {
     
   }
 
-  logout(id, token, validToken): void {
+  
+  constructor(private http: HttpClient, private dataService: DataService) { }
+  
+  logout(id, token, validToken) {
     this.setLocalStorage(id, token, validToken);
   }
-   
-  constructor(private http: HttpClient, private dataService: DataService) { }
+  logoutUser(id) {
+    return this.http.post(this.dataService.serverPath + this.dataService.serverPort + '/api/logout-user', { id }, { responseType: 'json' })
+
+  }
 
   authServiselogIn(loginForm) {
     // console.log(loginForm);

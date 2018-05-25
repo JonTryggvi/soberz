@@ -39,14 +39,9 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
             break;
         }
          
-        
         return x.id === jUserFromServer.userId ? x[changeNameFromServer] = changValueFromServer : x.firstname
       });
-      
-    
 
-      console.log(userToUPdateState);
-      
       return tassign(state, { soberUsers: userToUPdateState }); 
     
     case UsersActions.UPDATE_USER_BY_FIELD_ERROR:
@@ -102,14 +97,21 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       validState.token = action.payload.token;
       return tassign(state, validState);
       case UsersActions.CHECK_TOKEN_INVALID:
-      console.log(action.payload);
-
+      // console.log(action.payload);
       return state;  
     
     case UsersActions.LOG_OUT:
-      let logOutState = {};
-
+      let logOutState = INITIAL_STATE;
       return tassign(state, logOutState);
+    case UsersActions.LOG_OUT_SUCCESS:
+      // console.log(action.payload);
+      let newSignedOutState = [...state.soberUsers];
+      let signedOutuser = newSignedOutState.filter(x => x.id == action.payload.id)[0];
+      signedOutuser.online = '0';
+      signedOutuser.socketId = '';
+      return tassign(state, {soberUsers: newSignedOutState});
+    case UsersActions.LOG_OUT_ERROR:
+      return state;  
     case UsersActions.GET_ALL_USERS: 
       return state;
     case UsersActions.GET_ALL_USERS_SUCCESS:
@@ -122,9 +124,28 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       });
       // console.log(action.payload);
       return tassign(state, { soberUsers: ajUsers });
+    
     case UsersActions.GET_ALL_USERS_ERROR:
       console.log(action.payload);
+     
       return state;
+    
+    case UsersActions.ACTIVE_USER:
+    console.log(action.payload);
+      let aActiveUserState = [...state.soberUsers];
+      let activeUser = aActiveUserState.filter(x => x.id === action.payload.activeUserId)[0];
+      activeUser.socketId = action.payload.socketId;
+      activeUser.online = '1';
+      // console.log(aActiveUserState); 
+      return tassign(state, { soberUsers: aActiveUserState});
+    case UsersActions.INACTIVE_USER:
+      let aInactiveState = [...state.soberUsers];
+      console.log(aInactiveState);
+      let inactiveUser = aInactiveState.filter(x => x.socketId && x.socketId === action.payload)[0];
+      inactiveUser.socketId = '';
+      inactiveUser.online = '0';
+      
+      return tassign(state, { soberUsers: aInactiveState });
     
     default:
       return state;

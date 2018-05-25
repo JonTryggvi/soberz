@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   valuePass;
   checkNumber;
   loginForm: FormGroup;
-  loginFormSms: FormGroup;
+  // loginFormSms: FormGroup;
   isLoggedin: boolean;
   apiSubscribe: Subscription;
   reduxSubscribe: Subscription;
@@ -42,11 +42,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   
   }
   
-  getMobileErrorMessage() {
-    // console.log(this.loginFormSms.controls.mobilenumber);
+  // getMobileErrorMessage() {
+  //   // console.log(this.loginFormSms.controls.mobilenumber);
   
-    return this.loginFormSms.controls.mobilenumber.hasError('required') ? 'You must enter a valid number' : '';
-  }
+  //   return this.loginFormSms.controls.mobilenumber.hasError('required') ? 'You must enter a valid number' : '';
+  // }
 
 
   onSubmit(loginForm) {
@@ -62,8 +62,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit() {
   
     this.reduxSubscribe = this.ngRedux.select(state => state.users).subscribe(res => {
-      
-      
       if (res.token || res.validToken === 'ok' && res.activated === 1) {
         console.log('res', res);
         const id = Number(res.userId);
@@ -80,29 +78,25 @@ export class LoginComponent implements OnInit, OnDestroy {
    
     
     this.loginForm = this.fb.group({
-      user: ['', [Validators.required, Validators.email]],
+      user: [''],
       password: ['', Validators.required]
     })
 
-    this.loginFormSms = this.fb.group({
-      mobilenumber: ['', Validators.compose([
-        Validators.required,
-        ValidateForms.getMobileValidator()
-
-      ])]
-    })
+    // this.loginFormSms = this.fb.group({
+    //   mobilenumber: ['', Validators.compose([
+    //     Validators.required,
+    //     ValidateForms.getMobileValidator()
+    //   ])]
+    // })
     // console.log(this.loginForm);
     // console.log(this.loginFormSms);
-    
   }
   ngOnDestroy(): void {
     // this.apiSubscribe.unsubscribe();
     this.alive = false;
     this.reduxSubscribe.unsubscribe();
   }
-
 }
-
 @Component({
   selector: 'snack-bar-component-example-snack',
   templateUrl: 'alert.html',

@@ -17,7 +17,7 @@ export class AuthGuardService implements CanActivate {
   }
 
   checkLogin(url: string): boolean {
-    console.log('isLoggedIn ', this.authService);
+    // console.log('isLoggedIn ', this.authService);
     if (this.authService.isTokenValid === 'ok') {
       // this.router.navigate(['/portal']);
       return true;
@@ -27,7 +27,6 @@ export class AuthGuardService implements CanActivate {
     this.authService.redirectUrl = url;
     // this.usersActions.logOut();
     // this.authService.setLocalStorage(null, undefined, undefined);
-    // location.replace('/');
     // Navigate to the login page with extras
     this.router.navigate(['/home/login']);
     return false;

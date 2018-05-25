@@ -203,12 +203,12 @@
             </mat-card>
           </div>
         </mat-tab>
-        <mat-tab label="chat">
+        <mat-tab label="chat" >
           <ng-template mat-tab-label>
-            <mat-icon>chat</mat-icon>
+            <mat-icon >chat</mat-icon>
           </ng-template>
           <div class="demo-tab-content">
-            <app-chat></app-chat>
+            <app-chat ></app-chat>
           </div>
         </mat-tab>
         <mat-tab label="Users list" >
@@ -232,11 +232,12 @@
 
     <mat-card>
       <mat-card-title>
-        Online users
+        Online users {{loggedInUserId.length}}
       </mat-card-title>
+      
       <div *ngFor="let liveUsers of loggedInUserId" >
-        <div>
-           {{liveUsers.user.firstname}}
+        <div *ngIf="liveUsers">
+           {{liveUsers.firstname}}
         </div> 
       </div>
     </mat-card>

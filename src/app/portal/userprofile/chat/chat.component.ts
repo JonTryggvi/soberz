@@ -43,14 +43,12 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     this.scrollToBottom();
+    
     this.chatService
       .getMessages()
       .distinctUntilChanged()
       .filter((message: Message) => message.message.trim().length > 0)
       .throttleTime(1000)
-      // .scan((acc: string, message: Message, index: number) =>
-      //   `${message}(${index + 1})`
-      //   , 1)
       .subscribe((message: Message) => {
         console.log(message);
         this.isLocal = message.userId === this.userProfile.profileUser.id;
@@ -61,9 +59,6 @@ export class ChatComponent implements OnInit {
     this.chatService.sendStatus(this.userProfile.profileUser.id);
   
   }
-
- 
-
 
   ngAfterViewChecked() {
     this.scrollToBottom();

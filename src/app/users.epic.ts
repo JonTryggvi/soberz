@@ -99,12 +99,29 @@ export class UsersEpic {
         // console.log(payload);
         
         return this.userServise.usCheckToken(payload[0], payload[1] )
-      .map((result) => ({
-          type: UsersActions.CHECK_TOKEN_VALID,
-          payload: result
-        }))
+        .map((result) => ({
+            type: UsersActions.CHECK_TOKEN_VALID,
+            payload: result
+          }))
           .catch(error => Observable.of({
             type: UsersActions.CHECK_TOKEN_INVALID,
+            payload: error
+          }));
+      });
+  }
+
+  logoutUser = (action$: ActionsObservable<any>) => {
+    return action$.ofType(UsersActions.LOG_OUT)
+      .mergeMap(({ payload }) => {
+        console.log(payload);
+        
+        return this.authServise.logoutUser(payload)
+          .map((result) => ({
+            type: UsersActions.LOG_OUT_SUCCESS,
+            payload: result
+          }))
+          .catch(error => Observable.of({
+            type: UsersActions.LOG_OUT_ERROR,
             payload: error
           }));
       });

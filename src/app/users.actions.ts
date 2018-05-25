@@ -19,6 +19,8 @@ export class UsersActions {
   static CHECK_TOKEN_VALID: String = 'CHECK_TOKEN_VALID';
   static CHECK_TOKEN_INVALID: String = 'CHECK_TOKEN_INVALID';
   static LOG_OUT: String = 'LOG_OUT';
+  static LOG_OUT_SUCCESS: String = 'LOG_OUT_SUCCESS';
+  static LOG_OUT_ERROR: String = 'LOG_OUT_ERROR';
   static GET_ALL_USERS: String = 'GET_ALL_USERS';
   static GET_ALL_USERS_SUCCESS: String = 'GET_ALL_USERS_SUCCESS';
   static GET_ALL_USERS_ERROR: String = 'GET_ALL_USERS_ERROR';
@@ -32,6 +34,8 @@ export class UsersActions {
   static SEND_SPONSORSHIP_REQUEST: String = 'SEND_SPONSORSHIP_REQUEST';
   static SEND_SPONSORSHIP_REQUEST_SUCCESS: String = 'SEND_SPONSORSHIP_REQUEST_SUCCESS';
   static SEND_SPONSORSHIP_REQUEST_ERROR: String = 'SEND_SPONSORSHIP_REQUEST_ERROR';
+  static ACTIVE_USER: String = 'ACTIVE_USER';
+  static INACTIVE_USER: String = 'INACTIVE_USER';
 
   sendSponsor(sponsorId, userId, token) {
     this.ngRedux.dispatch({
@@ -75,16 +79,30 @@ export class UsersActions {
     })
   }
 
-  logOut(): void {
+  logOut(id): void {
     this.ngRedux.dispatch({
-      type: UsersActions.LOG_OUT
+      type: UsersActions.LOG_OUT,
+      payload: id
     })
-  }
+  } 
 
   checkToken(token: String, userId: number): void {
     this.ngRedux.dispatch({
       type: UsersActions.CHECK_TOKEN,
       payload: [token, userId]
+    })
+  }
+
+  activeUser(payload): void {
+    this.ngRedux.dispatch({
+      type: UsersActions.ACTIVE_USER,
+      payload: payload
+    })
+  }
+  inactiveUser(socketId): void {
+    this.ngRedux.dispatch({
+      type: UsersActions.INACTIVE_USER,
+      payload: socketId
     })
   }
 
