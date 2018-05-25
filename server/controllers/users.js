@@ -8,7 +8,6 @@ const time_format = time.format('YYYY-MM-DD HH:mm:ss Z')
 const fetch = require('node-fetch')
 let request = require('request');
 
-
 /*****************************************Async vs promise test********************************************** */
 
 function logFetch(url) {
@@ -36,8 +35,8 @@ async function logFetchAsync(url) {
 
 // logFetchAsync('https://api.chucknorris.io/jokes/random')
 
+/***************************************Functions************************************************* */
 
-/******************************************************************************************************* */
 sendSmsData = function (req, res, userData) {
   try {
     const sMobile = req.fields.tel
@@ -61,13 +60,11 @@ sendSmsData = function (req, res, userData) {
            return false
         }
         return true;
-
       })
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> sendSmsData stand alone function' }
     gLog('err', err.message + ' -> ' + err.where)
   }
- 
 } 
   
 function random4Digit() {
@@ -90,7 +87,7 @@ function isJson(str) {
 
 
 const jUser = {}
-jUser.message = {}
+
 
 jUser.updateUserbyField = function (req, res, next) {
   try {
@@ -125,10 +122,8 @@ jUser.updateUserbyField = function (req, res, next) {
 }
 
 jUser.saveFile = function (req, res, next) {
-  // const sImgPath = req.files.userImg.path
-  // const fileName = req.files.userImg.name
+  
   try {
-    
     const old_path = req.files.userImg.path
     const file_size = req.files.userImg.size
     const file_ext = req.files.userImg.name.split('.').pop()
@@ -288,7 +283,6 @@ jUser.logInUser = function(req, res, next) {
         gLog('ex', res.headersSent + ' after')
       } else {
         const jRes = { message: 'no match or user is not authenticated', response: jRow }
-        
         return res.status(500).json(jRes)
         next()
       }
@@ -361,13 +355,12 @@ jUser.saveUser = async function (req, res, next) {
     const sjUserImg = jUserData.userImg
     const aParams = [jUserData.firstname, jUserData.lastname, jUserData.username, jUserData.email, jUserData.tel, jUserData.gender, jUserData.isSponsor, sjUserImg, jUserData.password, time_format, code]
     stmt = 'INSERT INTO Users (firstname, lastname, username, email, mobile, gender, sponsor, imgUrl, password, date, code ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    db.run(stmt, aParams, async function (err, data) {
-      
+    db.run(stmt, aParams, async function (err, data) { 
       try {
         nodemailer.createTestAccount((err, account) => {
           if (err) {
-            return console.log(err)
-
+            console.log(err)
+            return 
           }
           let transporter = nodemailer.createTransport({
             host: 'mail.1984.is',
@@ -400,17 +393,16 @@ jUser.saveUser = async function (req, res, next) {
         const jSuccess = { status: 'ok', message: 'user: ' + jUserData.username + ' has been added' }
         res.send(jSuccess)
       } catch (error) {
-        // if (err)
         {
-          console.log(error);
-          return res.send(error.message)
+          const jErr = { status: 'failed', message: error.message, where: ' controllers/users.js -> saveUser function' }
+          gLog('err', jErr.message + ' -> ' + jErr.where)
+          return res.send(jErr)
         }
       }
-     
     })
   } catch (error) {
-    const err = { message: error.message, where: ' controllers/users.js -> saveUser function' }
-    gLog('err', err.message + ' -> ' + err.where)
+    const jErr = { message: error.message, where: ' controllers/users.js -> saveUser function' }
+    gLog('err', jErr.message + ' -> ' + jErr.where)
   }
 }
 
@@ -422,7 +414,7 @@ jUser.authSignin = function (req, res) {
     const params = [activated, code]
     db.run(stmt, params, function (err, dbResponse) {
       if (err) {
-        return res.status(500).send(err)
+        return res.status(500).send({status: 'failed'})
       }
       gLog('ok', 'user Activated' )
       return res.status(200).redirect('http://localhost:4200')
