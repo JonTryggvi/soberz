@@ -10,8 +10,8 @@
   <mat-card>
     <mat-card-content>
       
-      <mat-tab-group class="demo-tab-group">
-        <mat-tab label="Email">
+      <!-- <mat-tab-group class="demo-tab-group">
+        <mat-tab label="Email"> -->
           <form [formGroup]="loginForm" class="container" (submit)="onSubmit(loginForm)">
           
             <mat-form-field>
@@ -32,8 +32,8 @@
             </mat-form-field>
             <button mat-raised-button class="form-submit">Login</button>
           </form>
-        </mat-tab>
-        <mat-tab label="Mobile">
+        <!-- </mat-tab> -->
+        <!-- <mat-tab label="Mobile">
           <form [formGroup]="loginFormSms">
               <mat-form-field>
                 <input type="text" matInput placeholder="Enter your mobile #" formControlName="mobilenumber" [(ngModel)]="mobPass" value="" (keyup)="mobPass.length && mobPass.length >=6 ? checkNumber(mobPass) : ''"
@@ -46,10 +46,10 @@
               <button mat-raised-button class="form-submit">Login</button>
           </form>
            {{loginFormSms.controls.mobilenumber.status}}
-        </mat-tab>
+        </mat-tab> -->
         
-      </mat-tab-group>
-    </mat-card-content>
+      <!-- </mat-tab-group> -->
+    </mat-card-content> 
   </mat-card>
   <!-- <mat-card *ngIf="loginSuccess === false">
     Something went wrong. Please make sure that you have authenticated your profile!

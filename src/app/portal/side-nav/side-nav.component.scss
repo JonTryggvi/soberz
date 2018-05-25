@@ -9,6 +9,10 @@
     display: flex;
     flex-flow: column;
     width: 300px;
+    .btnLogout {
+      margin: 100px auto;
+      width:80%;
+    }
   }
 }
 .portal-view {

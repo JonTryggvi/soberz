@@ -31,6 +31,7 @@ import { UsersEpic } from './users.epic';
 import { UsersService } from './users.service';
 import { MatSnackBar } from '@angular/material';
 import { ModalAddComponent, ModalAddOverlay } from './portal/components/modal-addSponsor/modalAdd.component';
+import { NewDemoComponent } from './home/new-demo/new-demo.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,7 +48,8 @@ import { ModalAddComponent, ModalAddOverlay } from './portal/components/modal-ad
     ChatComponent,
     AlertComponent,
     ModalAddComponent,
-    ModalAddOverlay
+    ModalAddOverlay,
+    NewDemoComponent
 
   ],
   imports: [
@@ -78,7 +80,8 @@ export class AppModule {
       this.usersEpic.getAllUsers,
       this.usersEpic.saveUser,
       this.usersEpic.updateUserByFieldName,
-      this.usersEpic.sendSponsorRequest
+      this.usersEpic.sendSponsorRequest,
+      this.usersEpic.logoutUser
       // this.usersEpic.deleteUser,
       // this.usersEpic.createUser,
       // this.usersEpic.rateSitter

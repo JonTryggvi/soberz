@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressSpinnerModule, MatSelectModule, MatSidenavModule, MatSlideToggleModule, MatSortModule, MatTableModule, MatTabsModule, MatToolbarModule, MatSnackBarModule } from '@angular/material';
 
+
 @NgModule({
   imports: [
     MatFormFieldModule,
@@ -24,7 +25,8 @@ import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, Mat
     MatSortModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+
   ],
   exports: [
     MatFormFieldModule,
@@ -46,7 +48,7 @@ import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, Mat
     MatSortModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
 
   ]
 })

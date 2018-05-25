@@ -9,23 +9,45 @@ section {
   .msg-view {
     flex:4;
     overflow-y: scroll;
+    padding-top: 20px;
     .msg-container {
       display: flex;
       flex-flow: column;
-      div {
-        width: 70%;
+      .meta {
+        font-size: 9px;
+        margin: 5px 0;
       }
-   }
-  .localMsg {
-    align-items: flex-start;
-  }
-  .foreignMsg {
-    align-items: flex-end;
-    div {
-      display: flex;
-      justify-content: flex-end;
+     .msg {
+        min-width: 120px;
+       
+        min-height: 44px;
+        border-radius: 22px;
+      }
+      div {
+        max-width: 70%;
+      }
     }
-  }
+    .localMsg {
+      align-items: flex-start;
+      .msg {
+        padding:13px 0 13px 20px;
+        background-color: rgb(153, 106, 115);
+        color: white;
+      }
+    }
+    .foreignMsg {
+      align-items: flex-end;
+      margin-top:20px;
+      div {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .msg {
+        padding:13px 20px 13px 0;        
+        background-color: rgb(171, 183, 140);
+        color: white;
+      }
+    }
     
   }
   .msg-inputs {

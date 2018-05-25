@@ -2,8 +2,8 @@ const emitter = require('events')
 emitter.EventEmitter.prototype._maxListeners = 100;
 const express = require('express')
 const app = express()
-const http = require('http')
-const server = http.Server(app)
+const http = require('http').Server(app)
+// const server = http.Server(app)
 var path = require('path');
 const socketIO = require('socket.io')
 const io = socketIO(1984)
@@ -39,8 +39,6 @@ mongo.connect(sDatabasePath, { useNewUrlParser: true }, (err, client) => {
     return false
   }
   global.mongodb = client.db(sDataBaseName)
-
-  
   gLog('ok', 'OK mongoDb -> Connected to the database ' + sDataBaseName)
   return true
 }) 
@@ -83,9 +81,9 @@ global.gLog = (sStatus, sMessage) => {
 //  ****************************************************************************************************
 // Add headers
 app.use(function (req, res, next) {
-
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*')
+  
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -112,7 +110,8 @@ const fronEndRoutes = express.Router()
 
 
 fronEndRoutes.get('/', function (req, res, next) {
-  res.redirect('http://localhost:4200')
+/** this is where the angular client is running  when I have a live server running this will change to a res.sendFile(path/to/dist/index.html) */
+  return res.redirect('http://localhost:4200') 
   // res.sendFile(parentPath + 'index.html')
   next()
 })
@@ -152,6 +151,10 @@ apiRoutes.post('/save-file', function (req, res, next) {
 
 })
 
+apiRoutes.post('/logout-user', function (req, res, next) {
+  users.logoutUser(req, res, next);
+})
+
 apiRoutes.use(function (req, res, next) {
   users.verifyUsers(req, res, next)
 })
@@ -168,13 +171,16 @@ apiRoutes.get('/get-users', function (req, res, next) {
   users.getAllUsers(req, res, next)
 })
 
+
+
 apiRoutes.get('/', function (req, res, next) {
   try {
-    res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId, status:'ok' })
-    // next()
+   
+    return res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId, status:'ok' })
+     next()
   } catch (error) {
-    res.status(500).json({ message: 'Could not get this address', status: 'error' })
-    // next()
+    return res.status(500).json({ message: 'Could not get this address', status: 'error' })
+    next()
   }
 })
 
@@ -189,23 +195,25 @@ io.on('connection', (socket) => {
     gLog('ext', 'user connected')
     socket.on('new-message', (message) => {
       // console.log(message)
-      io.emit('new-message', message)
+      return io.emit('new-message', message)
+      
     })
 
 
-    socket.on('userActive', activeUserId => {
+    socket.on('userActive', function(activeUserId) {
       socketInfo = {
         activeUserId: activeUserId,
         socketId: socket.id
       }
       console.log(socketInfo)
-      io.emit('userActive', socketInfo)
+      return io.emit('userActive', socketInfo)
+      
     })
 
     socket.on('disconnect', function () {
       console.log(socket.id + ' disconnected')
-      io.emit('disconnected', socket.id);
-   
+      return io.emit('disconnected', socket.id);
+    
     })
 
   } catch (error) {
@@ -217,7 +225,7 @@ io.on('connection', (socket) => {
 //  ****************************************************************************************************
 
 
-server.listen(port, err => {
+http.listen(port, err => {
   if (err) {
     gLog(err, 'cannot use port: ' + port)
     return

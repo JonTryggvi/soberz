@@ -19,26 +19,30 @@ export class PortalComponent implements OnInit {
    
   }
   logOut() {
-    this.usersActions.logOut();
+    this.usersActions.logOut(this.userId);
     this.authService.setLocalStorage(null, undefined, undefined);
-    location.replace('/');
+    // location.replace('/');
   }
-  ngOnInit(): void {
+  
+  ngOnInit() {
+    
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       // console.log(users.validToken);
       if (users.validToken === 'Failed to authenticate token.') {
         this.logOut();
-        console.log('x');
+       
         // return false;
       }
     });
-    this.userId = this.authService.isUserIdValid;
-    // if (this.userId) {
-    this.usersActions.getAllUsers(this.authService.isToken);
-
-    // }
     
-    console.log(this.userId);
+    
+    // this.usersActions.getAllUsers(this.authService.isToken);
+    this.userId = this.authService.isUserIdValid;
+  
+
+    
+    
+    // console.log(this.userId);
     
   }
 }

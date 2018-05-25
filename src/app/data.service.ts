@@ -11,13 +11,15 @@ export class DataService {
   // currentData = this.dataSource.asObservable();
   thisUser;
   serverPort = ':1983';
+  // serverPort = '';
+  state;
   chatPort = ':1984';
   serverPath = 'http://localhost';
-  remoteServerPath = 'http://soberz-env.impgapztd4.us-east-2.elasticbeanstalk.com';
+  // serverPath = 'http://soberz-env.impgapztd4.us-east-2.elasticbeanstalk.com';
 
   constructor(private ngRedux: NgRedux<IAppState>) {
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
-      // console.log(users);
+      this.state = users;
       this.thisUser = users.soberUsers.filter(x => x.id === users.userId)[0];
     });
   }

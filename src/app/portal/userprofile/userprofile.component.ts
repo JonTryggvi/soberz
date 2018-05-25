@@ -1,5 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthService } from '../../auth.service';
@@ -10,6 +10,8 @@ import { IAppState } from '../../store/store';
 import { UsersActions } from '../../users.actions';
 import { UsersService } from '../../users.service';
 import { ChatService } from '../../chat.service';
+import { EventEmitter } from 'events';
+import { ChatComponent } from './chat/chat.component';
 @Component({
   selector: 'app-userprofile',
   templateUrl: './userprofile.component.html',
@@ -18,8 +20,10 @@ import { ChatService } from '../../chat.service';
 
 
 export class UserprofileComponent implements OnInit, OnDestroy {
+
   tabHeader: String;
   subscription: Subscription;
+  subscribeCuck: Subscription;
   public profileUser: User;
   public profileUsers: User[];
   userImg;
@@ -34,43 +38,41 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   aboutEditMode: boolean;
   imgEditMode: boolean;
   fileToUpload: File;
-  loggedInUserId: any[] = [];
+  loggedInUserId: User[] = [];
   loggedInUsers;
   jChuckNorris: any;
   serverPath: String;
   profileImg: String;
   localImg: String;
+  userValidtoken: String;
   ngOnDestroy(): void { //remember to use this on all subscriptions
-    // this.subscription.unsubscribe();
+    this.subscription.unsubscribe();
+    this.subscribeCuck.unsubscribe();
   }
 
-  constructor(private router: Router, private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) { }
+  constructor(private router: Router, private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) {
+    
+    
+  }
+
+
   paramId = Number(this.route.snapshot.paramMap.get('id'));
   logOut() {
-    this.usersActions.logOut();
+    this.usersActions.logOut(this.dataService.state.id);
     this.authService.setLocalStorage(null, undefined, undefined);
-    // location.replace('/');
     this.router.navigate(['/home/login']);
     return false;
   }
   
-  ngOnInit(): void {
+  ngOnInit() {
+    this.usersActions.getAllUsers(this.authService.isToken)
     this.serverPath = this.dataService.serverPath + this.dataService.serverPort;
-    this.usersService.getCucky().subscribe(data => {
-      // console.log(data);
+    this.subscribeCuck = this.usersService.getCucky().subscribe(data => {
       this.jChuckNorris = data;
     });
 
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
-      // console.log(users.soberUsers);
-      // console.log(this.authService.isToken);
-      // console.log(users);
-      
-      if (users.validToken === 'Failed to authenticate token.' || users.validToken === '') {
-        this.logOut();
-        return false;
-      }
-     
+      this.userValidtoken = users.validToken;
       if (users && users.soberUsers.length > 0) {
         this.profileUsers = users.soberUsers;
         // console.log(this.profileUsers);
@@ -82,29 +84,38 @@ export class UserprofileComponent implements OnInit, OnDestroy {
         this.profileUser = aUsers[0];
         // console.log(this.profileUser.userImg.imgPath);
         
+        this.loggedInUserId = this.profileUsers.filter(y => y.online == '1');
+        
         this.profileImg = this.profileUser.userImg.imgPath;
-        console.log(this.profileImg);
+        console.log(this.loggedInUserId);
         
         this.tabHeader = 'Here you can edit your profile ' + this.profileUser.username;
         // this.setUserAvatar();
         // console.log(this.profileUser['userImg'].imgId);
         this.theSponsor = this.profileUser.sponsor === 1 || this.profileUser.sponsor === 'true' || this.profileUser.sponsor === true ? true : false;
         // console.log(this.theSponsor);
-
       }
     });
-    this.chatService.getOnlineUsers().subscribe((activeUser) => { 
+    // if (this.userValidtoken === 'Failed to authenticate token.' || this.userValidtoken === '') {
+    //   // this.logOut();
+    //   console.log(this.userValidtoken);
+    // }
 
-      activeUser.user = this.profileUsers.filter(x => x.id === activeUser.activeUserId)[0];
-      this.loggedInUserId.push(activeUser);
+    this.chatService.getOnlineUsers().subscribe((activeUser) => {
+      this.usersActions.activeUser(activeUser);
+      // let aFiltered = this.profileUsers.filter(x => x.id === activeUser.activeUserId ? x.socketId = activeUser.socketId : x.socketId = '')[0];
+      // console.log(activeUser);
+      // this.loggedInUserId.push(aFiltered);
       // console.log(this.loggedInUserId);
     });
 
     this.chatService.userDisconnected().subscribe((socketId) => {
+      this.usersActions.inactiveUser(socketId);
       // console.log(socketId);
-      this.loggedInUserId.splice(this.loggedInUserId.findIndex(e => e.socketId === socketId), 1);
+      // this.loggedInUserId.splice(this.loggedInUserId.findIndex(e => e.socketId === socketId), 1);
       // console.log(this.loggedInUserId);
     }); 
+
   }
 
   editUser(bool, inputName) {

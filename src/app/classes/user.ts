@@ -16,4 +16,5 @@ export class User {
   public role: String;
   public online: String;
   public activated: String;
+  public socketId: String;
 }
