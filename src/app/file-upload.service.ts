@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { DataService } from './data.service';
-
+import 'rxjs/add/operator/catch';
 @Injectable()
 export class FileUploadService {
   handleError(e) {
@@ -11,6 +11,8 @@ export class FileUploadService {
   constructor(private http: HttpClient, private dataService: DataService) { }
 
   postFile(fileToUpload: File, oldFile): Observable<any> {
+    console.log(oldFile);
+    
     const endpoint = this.dataService.serverPath + this.dataService.serverPort + '/api/save-file';
     const formData: FormData = new FormData();
     formData.append('userImg', fileToUpload, fileToUpload.name);

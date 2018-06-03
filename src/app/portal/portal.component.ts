@@ -11,7 +11,7 @@ import { UsersActions } from '../users.actions';
 export class PortalComponent implements OnInit {
   userId;
   subscription;
-
+  timeStamp: number;
   ngOnDestroy(): void { //remember to use this on all subscriptions
     this.subscription.unsubscribe();
   }
@@ -20,28 +20,24 @@ export class PortalComponent implements OnInit {
   }
   logOut() {
     this.usersActions.logOut(this.userId);
-    this.authService.setLocalStorage(null, undefined, undefined);
-    // location.replace('/');
+    this.authService.setLocalStorage(undefined, undefined, undefined);
+    location.replace('/');
   }
   
   ngOnInit() {
     
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       // console.log(users.validToken);
-      if (users.validToken === 'Failed to authenticate token.') {
+      this.timeStamp = Math.round((new Date()).getTime() / 1000);
+      // console.log(users.tokenExp !< 1);
+      if (users.validToken === 'Failed to authenticate token.' || users.tokenExp !< 0 && users.tokenExp < this.timeStamp) {
         this.logOut();
-       
-        // return false;
       }
-    });
-    
+    }); 
     
     // this.usersActions.getAllUsers(this.authService.isToken);
     this.userId = this.authService.isUserIdValid;
   
-
-    
-    
     // console.log(this.userId);
     
   }

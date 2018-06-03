@@ -1,5 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { DataService } from '../../../data.service';
 import { UsersActions } from '../../../users.actions';
@@ -13,14 +13,17 @@ import { IAppState } from '../../../store/store';
   templateUrl: './usertable.component.html',
   styleUrls: ['./usertable.component.scss']
 })
-export class UsertableComponent implements OnInit  {
+export class UsertableComponent implements OnInit, OnDestroy  {
   subscription: Subscription;
   userCount: number = this.usersData.profileUsers.length;
   dataSource;
   userObj;
   loggedInUserId;
-  displayedColumns = this.usersData.profileUser.role === 'Admin' ? ["id", "firstname", "role", "addsponsor", "deleteuser", "setadmin"] : ["id", "firstname", "role", "addsponsor"] ;
+  displayedColumns = this.usersData.profileUser.role === 'Admin' ? ["online", "firstname", "role", "addsponsor", "deleteuser", "setadmin"] : ["online", "firstname", "role", "addsponsor"];
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -38,10 +41,11 @@ export class UsertableComponent implements OnInit  {
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       this.dataSource = new MatTableDataSource(users.soberUsers);
     })
-    // this.dataSource = new MatTableDataSource(this.usersData.profileUsers);
+    
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    // this.dataService.currentData.subscribe(data => this.userObj = data);
+    console.log(this.sort);
+    
   }
   applyFilter(filterValue: any) {
     filterValue = filterValue.trim(); // Remove whitespace
@@ -53,18 +57,13 @@ export class UsertableComponent implements OnInit  {
   // }
   setUserRole(e, userId) {
     // console.log(e);
-    let inputSendValue = e.checked == true ? 1 : 2;
+    let inputSendValue = e.checked ? 1 : 2;
     this.usersActions.updateUserByField(inputSendValue, 'user_role', userId);
   }
   
-
- 
-
-
 }
 export interface User {
-  id: number;
+  online: string;
   firstname: string;
   role: string;
- 
 }

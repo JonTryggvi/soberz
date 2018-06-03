@@ -32,6 +32,8 @@ import { UsersService } from './users.service';
 import { MatSnackBar } from '@angular/material';
 import { ModalAddComponent, ModalAddOverlay } from './portal/components/modal-addSponsor/modalAdd.component';
 import { NewDemoComponent } from './home/new-demo/new-demo.component';
+import { FilterUsersPipe } from './portal/userprofile/filter-users.pipe';
+import { ModalUserComponent, ModalUserOverlay } from './portal/components/modal-user/modal-user.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,8 +51,10 @@ import { NewDemoComponent } from './home/new-demo/new-demo.component';
     AlertComponent,
     ModalAddComponent,
     ModalAddOverlay,
-    NewDemoComponent
-
+    NewDemoComponent,
+    FilterUsersPipe,
+    ModalUserComponent,
+    ModalUserOverlay
   ],
   imports: [
     BrowserModule,
@@ -63,7 +67,7 @@ import { NewDemoComponent } from './home/new-demo/new-demo.component';
     FormsModule,
     MaterialModule
   ],
-  entryComponents: [ModalOverlay, AlertComponent, ModalAddOverlay],
+  entryComponents: [ModalOverlay, AlertComponent, ModalAddOverlay, ModalUserOverlay],
   providers: [AuthGuardService, AuthService, DataService, UsersActions, UsersService, UsersEpic, FileUploadService, ChatService],
   bootstrap: [AppComponent]
 })

@@ -26,7 +26,7 @@ export class ModalComponent implements OnInit {
     console.log('x');
     
     let dialogRef = this.dialog.open(ModalOverlay, {
-      width: '250px',
+      width: '350px',
       data: data
     });
   }

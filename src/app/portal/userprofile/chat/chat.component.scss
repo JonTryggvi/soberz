@@ -30,7 +30,7 @@ section {
     .localMsg {
       align-items: flex-start;
       .msg {
-        padding:13px 0 13px 20px;
+        padding:13px 8px 13px 20px;
         background-color: rgb(153, 106, 115);
         color: white;
       }
@@ -43,7 +43,7 @@ section {
         justify-content: flex-end;
       }
       .msg {
-        padding:13px 20px 13px 0;        
+        padding:13px 20px 13px 8px;        
         background-color: rgb(171, 183, 140);
         color: white;
       }

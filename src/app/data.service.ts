@@ -1,5 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { IAppState } from './store/store';
 
@@ -10,14 +10,18 @@ export class DataService {
   // private dataSource = new BehaviorSubject<any>({});
   // currentData = this.dataSource.asObservable();
   thisUser;
-  serverPort = ':1983';
+
+  serverPort = isDevMode() ? ':1983': '';
   // serverPort = '';
+  
   state;
   chatPort = ':1984';
-  serverPath = 'http://localhost';
+  serverPath = isDevMode() ? window.location.protocol + '//' + window.location.hostname : 'http://soberz-env.impgapztd4.us-east-2.elasticbeanstalk.com/';
   // serverPath = 'http://soberz-env.impgapztd4.us-east-2.elasticbeanstalk.com';
-
+  
   constructor(private ngRedux: NgRedux<IAppState>) {
+    // console.log(this.serverPath);
+    // console.log(isDevMode());
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
       this.state = users;
       this.thisUser = users.soberUsers.filter(x => x.id === users.userId)[0];

@@ -18,7 +18,18 @@
                 <!-- <button (click)="testHttp()">test http</button> -->
               </div>
               <div class="imgInput" *ngIf="imgEditMode">
+                <img *ngIf="serverPath + profileImg" [src]="localImg ? localImg : serverPath + profileImg" alt="">
                 <input mat-button type="file" placeholder="Profile image" name="sampleFile" name="userImg" id="file" (change)="handleFileInput($event, 'imgUrl')">
+                <button mat-mini-fab color="primary" (click)="openFileBrowser($event, 'file')">
+                  <mat-icon>
+                    add_a_photo
+                  </mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" (click)="editUser(false, 'imgUrl')">
+                  <mat-icon mat-mini-fab>
+                    close
+                  </mat-icon>
+                </button>
               </div>
             </mat-card>
             <mat-card class="userInfo double">
@@ -216,6 +227,40 @@
             <mat-icon>list</mat-icon>
           </ng-template>
             <app-usertable></app-usertable>
+        </mat-tab>
+        <mat-tab label="Search">
+          <ng-template mat-tab-label>
+            <mat-icon>search</mat-icon>
+          </ng-template>
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="Find user" [(ngModel)]="search">
+            </mat-form-field>
+         
+          <div class="theFilter">
+            <div class="cardPlaceholder" *ngFor="let user of profileUsers | filterUsers: search">
+          
+              <div *ngIf="user === -1"> No user found </div>
+
+              <mat-card class="example-card" *ngIf="user !== -1">
+                <mat-card-header>
+                  <img mat-card-avatar class="example-header-image" [src]="renderBgrImg(user)" />
+                  <mat-card-title>{{user.firstname}} {{user.lastname}} </mat-card-title>
+                  <mat-card-subtitle *ngIf="user.sponsor==1">Sponsor</mat-card-subtitle>
+                  <mat-card-subtitle *ngIf="user.sponsor==0">Sponsee</mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                 
+                </mat-card-content>
+                <mat-card-actions>
+                  <add-sponsor-modal *ngIf="user.sponsor && user.id !== loggedInUserId" [data]="user" [btnText]="ask"></add-sponsor-modal>
+                  <button mat-button>Chat</button>
+                </mat-card-actions>
+              </mat-card>
+
+            </div>
+          </div>
+          
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>

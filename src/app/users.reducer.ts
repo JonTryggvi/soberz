@@ -48,16 +48,19 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       return state;  
   
     case UsersActions.SAVE_USER:
-      console.log(action.payload);
+    
+    /************************************testing*************************************/  
+      // console.log('reducer ', action.payload);
+      // let newUserTestState = [ ...state.soberUsers, action.payload];
+      // console.log('reducerPushed: ', newUserTestState);
+      // return tassign(state, { soberUsers: newUserTestState });
+    /************************************testing*************************************/  
+    
       return state;
     case UsersActions.SAVE_USER_SUCCESS:
       // remember to update state with new user
-      let newUserState = { ...state };
-      newUserState.soberUsers.push(action.payload);
-      // return state;
-      console.log(newUserState);
-      
-       return tassign(state, newUserState);
+      let newUserState = [...state.soberUsers, action.payload];
+      return tassign(state, { soberUsers: newUserState });
     
     case UsersActions.SAVE_USER_ERROR:
       return state;  
@@ -68,8 +71,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       return state;
     case UsersActions.LOG_IN_SUCCESS:
       let jPayload = action.payload;
-      // console.log(jPayload);
-      // console.log(jPayload.response);
+      console.log(jPayload);
       let loginState = { ...state }
       loginState.userId = Number(jPayload.response.id)
       loginState.userRole = jPayload.response.role_name;
@@ -77,7 +79,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       loginState.validToken = 'ok';
       loginState.activated = jPayload.response.activated;
       loginState.loggInSuccess = true;
-      
+      loginState.tokenExp = jPayload.tokenExpires;
       return tassign(state, loginState);  
     case UsersActions.LOG_IN_FAILED:
       let newLogginFailed = { ...state };
@@ -91,24 +93,26 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       // console.log(action.payload);
       let validState = { ...state };
       validState.validToken = action.payload.message;
-      // console.log(action.payload);
-      
+      console.log(action.payload.v.exp);
+      validState.tokenExp = action.payload.v.exp;
       validState.userId = Number(action.payload.userId);
       validState.token = action.payload.token;
       return tassign(state, validState);
-      case UsersActions.CHECK_TOKEN_INVALID:
-      // console.log(action.payload);
-      return state;  
+    case UsersActions.CHECK_TOKEN_INVALID:
+      let invalidState = { ...state };
+      invalidState.validToken = action.payload.error.message;
+      console.log(action.payload);
+      return tassign(state, invalidState);  
     
     case UsersActions.LOG_OUT:
       let logOutState = INITIAL_STATE;
       return tassign(state, logOutState);
     case UsersActions.LOG_OUT_SUCCESS:
-      // console.log(action.payload);
+      console.log(state);
       let newSignedOutState = [...state.soberUsers];
       let signedOutuser = newSignedOutState.filter(x => x.id == action.payload.id)[0];
-      signedOutuser.online = '0';
-      signedOutuser.socketId = '';
+      // signedOutuser.online = '0';
+      // signedOutuser.socketId = '';
       return tassign(state, {soberUsers: newSignedOutState});
     case UsersActions.LOG_OUT_ERROR:
       return state;  
@@ -131,7 +135,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       return state;
     
     case UsersActions.ACTIVE_USER:
-    console.log(action.payload);
+      // console.log(action.payload);
       let aActiveUserState = [...state.soberUsers];
       let activeUser = aActiveUserState.filter(x => x.id === action.payload.activeUserId)[0];
       activeUser.socketId = action.payload.socketId;
@@ -144,9 +148,9 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       let inactiveUser = aInactiveState.filter(x => x.socketId && x.socketId === action.payload)[0];
       inactiveUser.socketId = '';
       inactiveUser.online = '0';
-      
       return tassign(state, { soberUsers: aInactiveState });
-    
+      // return state;
+      
     default:
       return state;
   }
