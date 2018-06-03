@@ -15,9 +15,9 @@ global.config = require('./config'); // get our config file
 global.gFs = require('fs')
 global.crypto = require('crypto');
 
-global.port = 1983
-global.serverpath = 'http://localhost:' + port
-
+global.port = process.env.PORT || 1983
+global.serverpath = 'http://127.0.0.1:' + port
+const env = process.env.NODE_ENV || 'dev'
 app.use(formidable())
 app.use(express.static(__dirname + '/dist'))
 app.set('superSecret', config.secret)
@@ -69,17 +69,30 @@ app.use(function (req, res, next) {
 
 //  ****************************************************************************************************
 
-// app.use(express.static(_dirname + '/dist'))
+app.use(express.static(__dirname + '/public'))
+
+// making shure we have a uploads directory 
+var dirUP = __dirname + '/public/uploads';
+var dirImg = __dirname + '/public/uploads/img'
+if (!gFs.existsSync(dirUP)) {
+  gFs.mkdirSync(dirUP);
+}
+if (!gFs.existsSync(dirImg)) {
+  gFs.mkdirSync(dirImg)
+}
 
 //  ****************************************************************************************************
 
 const fronEndRoutes = express.Router()
+app.use('/', fronEndRoutes)
 fronEndRoutes.get('/', function (req, res, next) {
-/** this is where the angular client is running  when I have a live server running this will change to a res.sendFile(path/to/dist/index.html) */
-  return res.redirect('http://localhost:4200') 
+
+  // return res.sendFile(__dirname + '/public/dist/index.html') 
+  // return res.send('test')
+  return res.redirect('http://localhost:4200')
+  // res.sendFile(__dirname + '/public/dist/index.html') 
   next()
 })
-app.use('/', fronEndRoutes)
 
 //  ****************************************************************************************************
 
@@ -114,9 +127,12 @@ apiRoutes.post('/save-file', function (req, res, next) {
 apiRoutes.post('/logout-user', function (req, res, next) {
   users.logoutUser(req, res, next);
 })
-
+var count = 0;
 apiRoutes.use(function (req, res, next) {
+//  gLog('info', 'how many times am i calling this ' + count++)
+  
   users.verifyUsers(req, res, next)
+
 })
 
 apiRoutes.post('/delete-file', function (req, res, next) {
@@ -135,11 +151,12 @@ apiRoutes.get('/get-users', function (req, res, next) {
 
 apiRoutes.get('/', function (req, res, next) {
   try {
-    return res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId, status:'ok' })
-    next()
+    res.status(200).json({ message: 'ok', v: req.decoded, token: req.token, userId: req.userId, status:'ok' })
+    return next()
   } catch (error) {
-    return res.status(500).json({ message: 'Could not get this address', status: 'error' })
-    next()
+    gLog('err', error.message)
+    res.status(500).json({ message: 'Could not get this address', status: 'error' })
+    return next()
   }
 })
 
@@ -154,26 +171,29 @@ io.on('connection', (socket) => {
     gLog('ext', 'user connected')
     socket.on('new-message', (message) => {
       // console.log(message)
-      io.emit('new-message', message)
+     return io.emit('new-message', message)
     })
-
+    
     socket.on('userActive', function(activeUserId) {
       socketInfo = {
         activeUserId: activeUserId,
         socketId: socket.id
       }
       console.log(socketInfo)
-      io.emit('userActive', socketInfo)
+      return io.emit('userActive', socketInfo)
     })
 
     socket.on('disconnect', function () {
       console.log(socket.id + ' disconnected')
-      io.emit('disconnected', socket.id);
+      return io.emit('disconnected', socket.id);
     })
+
 
   } catch (error) {
     gLog('err', 'Would not connect to socket: '+ error.message)
   }
+
+
   
 });
 
@@ -182,7 +202,7 @@ io.on('connection', (socket) => {
 http.listen(port, err => {
   if (err) {
     gLog(err, 'cannot use port: ' + port)
-    return
+    return false
   }
   gLog('ok', 'server is listening on port: ' + port)
 })

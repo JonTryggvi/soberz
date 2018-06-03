@@ -7,8 +7,13 @@
   <form [formGroup]="signinForm" class="container" (submit)="onSubmit(signinForm)">
     <mat-card>
       <div class="imgContainer">
-        <img src="" alt="">
-        <input type="file" placeholder="Profile image" name="sampleFile" formControllName="userImg" id="file" (change)="handleFileInput($event.target.files)" >
+        <input type="file" placeholder="Profile image" name="sampleFile" formControllName="userImg" id="signinFile" (change)="handleFileInput($event.target.files)" >
+        <img  [src]="localImg ? localImg : 'assets/img/user_placeholder.png'" alt="">
+        <button mat-mini-fab color="primary" (click)="openFileBrowser($event, 'signinFile')">
+          <mat-icon>
+            add_a_photo
+          </mat-icon>
+        </button>
       </div>
 
       
@@ -73,7 +78,10 @@
         <mat-error *ngIf="signinForm.controls.password.invalid">{{getPasswordErrorMessage()}}</mat-error>
       </mat-form-field>
 
-      <button mat-raised-button class="form-submit">Signup</button>
+      <button mat-raised-button color="primary" class="form-submit">Signup</button>
+      <mat-card-footer>
+        <p>This site uses Cookies to give you the best possible experience. By continuing you are aggreeing to these terms.</p>
+      </mat-card-footer>
     </mat-card>
   </form>
 

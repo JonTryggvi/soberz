@@ -6,3 +6,23 @@ app-chat {
   display: flex;
   justify-content: center;
 }
+
+.mat-cell {
+  min-height: 10px;
+}
+.userStatus {
+  position: absolute;
+  line-height: 14px;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50%;
+  
+}
+.online {
+  width: 10px;
+  height: 10px;
+  background-color: greenyellow;
+}
+.offline {
+  background-color: grey;
+}

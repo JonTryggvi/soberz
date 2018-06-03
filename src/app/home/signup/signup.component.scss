@@ -28,7 +28,16 @@ form {
     width: calc(50% - 20px);
     .imgContainer{
       display: flex;
-      margin: 0 auto;
+      margin: 0 auto 20px;
+      flex-flow: row;
+      justify-content: flex-start;
+      align-items: flex-end;
+      width: 100%;
+      height: 140px;
+      img {
+        width: 30%;
+        margin-right: 15px;
+      }
     }
     mat-slide-toggle {
       margin-bottom: 10px;
@@ -40,7 +49,22 @@ form {
     .form-submit {
       align-self: center;
       width: 120px;
+      margin-top: 24px; 
+    }
+    .mat-card-footer{
+      margin-top: 100px;
+      display: flex;
+      justify-content: center;
+      p {
+        width:90%;
+        font-size: 12px;
+        text-align: center;
+        color: grey;
+      }
     }
   }
 
+}
+#signinFile {
+  display: none;
 }

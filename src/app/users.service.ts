@@ -42,7 +42,8 @@ export class UsersService {
   }
 
   usCheckToken(token, userId: number) {
-    if (token != '') {
+
+    if (token !== '') {
       const httpOptions = {
         headers: new HttpHeaders({
           'x-access-token': token
@@ -84,6 +85,7 @@ export class UsersService {
       userRole: undefined,
       token: '',
       validToken: '',
+      tokenExp: 0,
       activated: 0,
       soberUsers: [],
       loggInSuccess: undefined,

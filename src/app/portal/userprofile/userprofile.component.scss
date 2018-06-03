@@ -48,6 +48,15 @@
     }
   }
 }
+.imgInput {
+  img {
+    width:30%;
+  }
+  input {
+    display: none;
+    height: 44px;
+  }
+}
 
 .userInfo {
   width: 50%;
@@ -96,4 +105,23 @@
   }
 }
 
+.theFilter {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  .cardPlaceholder {
+    width: 32%;
+    max-width: 280px;
+  }
+}
+
+.example-card {
+  min-width: 200px;
+  margin: 3px;
+}
+
+.example-header-image {
+  // background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: contain !important;
+}
 

@@ -6,8 +6,6 @@ import { ChatService } from '../../chat.service';
 import { DataService } from '../../data.service';
 import { Router } from '@angular/router';
 
-
-
 @Component({
   selector: 'app-side-nav',
   templateUrl: './side-nav.component.html',
@@ -29,17 +27,10 @@ export class SideNavComponent implements OnInit {
   logOut() {
     this.authService.setLocalStorage(null, undefined, undefined);
     this.usersActions.logOut(this.dataService.thisUser.id);
-  
     this.router.navigate(['/home/login']);
   }
 
   ngOnInit() {
     this.userId = this.authService.isUserIdValid;
-    
-  
-    
-    // console.log(this.userId);
-    
   }
-
 }

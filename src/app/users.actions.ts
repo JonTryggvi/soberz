@@ -99,6 +99,7 @@ export class UsersActions {
       payload: payload
     })
   }
+
   inactiveUser(socketId): void {
     this.ngRedux.dispatch({
       type: UsersActions.INACTIVE_USER,

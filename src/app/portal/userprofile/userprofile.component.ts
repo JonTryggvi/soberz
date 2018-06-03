@@ -12,6 +12,7 @@ import { UsersService } from '../../users.service';
 import { ChatService } from '../../chat.service';
 import { EventEmitter } from 'events';
 import { ChatComponent } from './chat/chat.component';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-userprofile',
   templateUrl: './userprofile.component.html',
@@ -26,8 +27,9 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   subscribeCuck: Subscription;
   public profileUser: User;
   public profileUsers: User[];
-  userImg;
-  updateImg;
+  userImg: String;
+  sanitezedImg;
+  updateImg: String;
   firstNameEditMode: boolean;
   lastNameEditMode: boolean;
   usernameEditMode: boolean;
@@ -45,15 +47,13 @@ export class UserprofileComponent implements OnInit, OnDestroy {
   profileImg: String;
   localImg: String;
   userValidtoken: String;
+  imgPlaceholder: String = 'http://ulbcnj.org/wp-content/uploads/2015/05/placeholder.png';
   ngOnDestroy(): void { //remember to use this on all subscriptions
     this.subscription.unsubscribe();
     this.subscribeCuck.unsubscribe();
   }
 
-  constructor(private router: Router, private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) {
-    
-    
-  }
+  constructor(private sanitizer: DomSanitizer, private router: Router, private authService: AuthService, private usersActions: UsersActions, private ngRedux: NgRedux<IAppState>, private route: ActivatedRoute, private dataService: DataService, private fileUploadService: FileUploadService, private usersService: UsersService, private chatService: ChatService) {}
 
 
   paramId = Number(this.route.snapshot.paramMap.get('id'));
@@ -62,6 +62,15 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     this.authService.setLocalStorage(null, undefined, undefined);
     this.router.navigate(['/home/login']);
     return false;
+  }
+
+  renderBgrImg(user) {
+    let urlToSanitize = this.serverPath + user.userImg.imgPath;
+    // console.log(urlToSanitize);
+    return this.sanitizer.bypassSecurityTrustUrl(urlToSanitize);
+   
+    // console.log(this.sanitezedImg);
+    
   }
   
   ngOnInit() {
@@ -87,7 +96,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
         this.loggedInUserId = this.profileUsers.filter(y => y.online == '1');
         
         this.profileImg = this.profileUser.userImg.imgPath;
-        console.log(this.loggedInUserId);
+        // console.log(this.loggedInUserId);
         
         this.tabHeader = 'Here you can edit your profile ' + this.profileUser.username;
         // this.setUserAvatar();
@@ -111,6 +120,8 @@ export class UserprofileComponent implements OnInit, OnDestroy {
 
     this.chatService.userDisconnected().subscribe((socketId) => {
       this.usersActions.inactiveUser(socketId);
+      console.log('a user left the building');
+      
       // console.log(socketId);
       // this.loggedInUserId.splice(this.loggedInUserId.findIndex(e => e.socketId === socketId), 1);
       // console.log(this.loggedInUserId);
@@ -149,12 +160,18 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     }
   }
   submit(inpValue, inpName) {
-    console.log(inpValue);
+    // console.log(inpValue);
     
     this.usersActions.updateUserByField(inpValue, inpName, this.paramId);
     this.firstNameEditMode = false;
     this.editUser(false, inpName);    
     // this.deleteFile();
+  }
+
+  openFileBrowser(event: any, id: string) {
+    event.preventDefault();
+    let element: HTMLElement = document.getElementById(id) as HTMLElement;
+    element.click();
   }
 
   deleteFile() {
@@ -164,7 +181,6 @@ export class UserprofileComponent implements OnInit, OnDestroy {
 
   handleFileInput(files, inpName) {
     this.fileToUpload = files.target.files.item(0);
-   
     this.fileUploadService.postFile(this.fileToUpload, this.profileImg).subscribe(data => {
       let jUserImg = `{ "imgPath":  "${data.imgPath}", "imgId": "${data.imgId}" }`;
       this.submit(jUserImg, inpName);
@@ -180,6 +196,7 @@ export class UserprofileComponent implements OnInit, OnDestroy {
     }, error => {
       console.log(error);
     });
+    
   }
 
 

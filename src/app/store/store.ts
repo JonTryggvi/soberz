@@ -9,6 +9,7 @@ export class UsersState {
   token: String;
   activated: number;
   validToken: String;
+  tokenExp: number;
   soberUsers: User[];
   loggInSuccess: boolean;
   online: String;

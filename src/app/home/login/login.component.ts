@@ -27,7 +27,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   isLoggedin: boolean;
   apiSubscribe: Subscription;
   reduxSubscribe: Subscription;
-  private alive: boolean = true;
   loginSuccess: boolean = undefined;
   getErrorMessage() {
     return this.loginForm.controls.user.hasError('required') ? 'You must enter a value' :
@@ -38,9 +37,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
  
-  constructor(private fb: FormBuilder, private router: Router, private usersActions: UsersActions, private authService: AuthService, private ngRedux: NgRedux<IAppState>, private usersService: UsersService, public snackBar: MatSnackBar) {
-  
-  }
+  constructor(private fb: FormBuilder, private router: Router, private usersActions: UsersActions, private authService: AuthService, private ngRedux: NgRedux<IAppState>, private usersService: UsersService, public snackBar: MatSnackBar) {}
   
   // getMobileErrorMessage() {
   //   // console.log(this.loginFormSms.controls.mobilenumber);
@@ -93,7 +90,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     // this.apiSubscribe.unsubscribe();
-    this.alive = false;
     this.reduxSubscribe.unsubscribe();
   }
 }
