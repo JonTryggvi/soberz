@@ -5,29 +5,28 @@
 </div>
 <mat-table class="" [dataSource]="dataSource" matSort>
 
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
-    <mat-cell *matCellDef="let user ">{{user.id}}</mat-cell>
+  <ng-container matColumnDef="online">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+    <mat-cell *matCellDef="let user "><span class="userStatus {{user.online=='1'?'online':'offline'}}"></span></mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="firstname">
     <mat-header-cell *matHeaderCellDef mat-sort-header>name</mat-header-cell>
-    <mat-cell class="description-cell" *matCellDef="let user  ">{{user.firstname}}</mat-cell>
+    <mat-cell class="description-cell" *matCellDef="let user  "><app-modal-user [data]="user" [btnText]="user.firstname"></app-modal-user></mat-cell>
     
   </ng-container>
-  <ng-container matColumnDef="addsponsor">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Ask to be your sponsor</mat-header-cell>
-    <mat-cell class="duration-cell" *matCellDef="let user ">
+ 
 
-      <add-sponsor-modal *ngIf="user.sponsor && user.id !== loggedInUserId" [data]="user" [btnText]="ask" ></add-sponsor-modal>
-
-    </mat-cell>
-  
-  </ng-container>
-
-  <ng-container matColumnDef="role">
+  <ng-container matColumnDef="role" >
     <mat-header-cell *matHeaderCellDef mat-sort-header>Role</mat-header-cell>
     <mat-cell class="duration-cell" *matCellDef="let user ">{{user.role}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="addsponsor">
+    <mat-header-cell *matHeaderCellDef>Ask to be your sponsor</mat-header-cell>
+    <mat-cell class="duration-cell" *matCellDef="let user ">
+      <add-sponsor-modal *ngIf="user.sponsor && user.id !== loggedInUserId" [data]="user" [btnText]="ask"></add-sponsor-modal>
+    </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="deleteuser" >

@@ -1,0 +1,18 @@
+<div class="userOverlayBox">
+  <h1 mat-dialog-title>{{data.firstname}} {{data.lastname}}</h1>
+  <button class="btnExit" mat-mini-fab (click)="onNoClick()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <div class="dialog-content" mat-dialog-content>
+    <img mat-card-md-image [src]="data.userImg.imgPath ? serverPath+data.userImg.imgPath : 'assets/img/user_placeholder.png'" alt="">
+    <div class="aboutUser">
+      <div>{{data.firstname}} aka {{data.username}}</div>
+      <div>{{data.sponsor == 1 ? 'Sponsor ready to serve': 'On my way to become a sponsor'}}</div>
+      <div *ngIf="currentlySponsors > 0">Currently is helping {{currentlySponsors}} sponsees</div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button [disabled]="data.online !== '1'" color="primary" (click)="chatWithUser(data.id)" cdkFocusInitial><mat-icon>chat</mat-icon> {{data.firstname}}</button>
+    <add-sponsor-modal *ngIf="data.sponsor == 1 && data.id !== loggedInUserId"  [data]="data" [btnText]="'ask to sponse'"></add-sponsor-modal>
+  </div>
+</div>

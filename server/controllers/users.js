@@ -10,28 +10,28 @@ let request = require('request');
 
 /*****************************************Async vs promise test********************************************** */
 
-function logFetch(url) {
-  return fetch(url)
-    .then(response => response.json())
-    .then(text => {
-      gLog('info', text.value + chalk.black.bgGreen(' with PROMISE '));
-    }).catch(err => {
-      gLog('err', err.messge)
-    });
-}
+// function logFetch(url) {
+//   return fetch(url)
+//     .then(response => response.json())
+//     .then(text => {
+//       gLog('info', text.value + chalk.black.bgGreen(' with PROMISE '));
+//     }).catch(err => {
+//       gLog('err', err.messge)
+//     });
+// }
 // logFetch('https://api.chucknorris.io/jokes/random')
 
-async function logFetchAsync(url) {
-  try {
-    const response = await fetch(url)
-    const jResponse = await response.json()
-    const sChuckyJodke = await jResponse.value
-    gLog('ex',sChuckyJodke + chalk.black.bgGreen(' with ASYNC '))
-  }
-  catch (err) {
-    gLog('err', err.message)
-  }
-}
+// async function logFetchAsync(url) {
+//   try {
+//     const response = await fetch(url)
+//     const jResponse = await response.json()
+//     const sChuckyJodke = await jResponse.value
+//     gLog('ex',sChuckyJodke + chalk.black.bgGreen(' with ASYNC '))
+//   }
+//   catch (err) {
+//     gLog('err', err.message)
+//   }
+// }
 
 // logFetchAsync('https://api.chucknorris.io/jokes/random')
 
@@ -111,13 +111,14 @@ jUser.updateUserbyField = function (req, res, next) {
         dataValueChecked = dataValue
       }
       const jSuccess = { status: 'ok', message: 'userfield: ' + columnName + ' has been updateed', updatedData: { name: columnName, userId: userId, value: dataValueChecked}}
-      return res.status(200).json(jSuccess)
-      next() // needed to work with the authentication 
+      res.status(200).json(jSuccess)
+      return next() // needed to work with the authentication 
     })
   } catch (error) {
     const err = { message: error.message, where: 'controllers/users.js -> updateUserByField function' }
     gLog('err', err.message + ' -> ' + err.where)
-    return res.status(500).json(err)
+    res.status(500).json(err)
+    return next()
   }
 }
 
@@ -125,12 +126,14 @@ jUser.saveFile = function (req, res, next) {
   
   try {
     const old_path = req.files.userImg.path
+    
     const file_size = req.files.userImg.size
     const file_ext = req.files.userImg.name.split('.').pop()
     const index = old_path.lastIndexOf('/') + 1
     const file_name = old_path.substr(index)
-    const new_path = path.join(process.env.PWD, '/dist/uploads/img/', file_name + '.' + file_ext)
+    const new_path = path.join(process.env.PWD, 'public/uploads/img/', file_name + '.' + file_ext)
     const prevFile = req.fields.oldFile
+    console.log(req.fields);
     // console.log(prevFile);
 
     //  perhaps try with async await or promise methood
@@ -152,8 +155,9 @@ jUser.saveFile = function (req, res, next) {
             gLog('err', error.message + ' -> ' + error.where)
             return res.status(500).json(error)
           } 
-          if (prevFile && gFs.existsSync('.' + prevFile)) {
-            gFs.unlink('.' + prevFile, (err) => {
+    
+          if (prevFile && gFs.existsSync('./public' + prevFile)) {
+            gFs.unlink('./public' + prevFile, (err) => {
               if (err) {
                 const error = { success: false, message: err.message, where: 'controllers/users.js -> saveFile -> writefile -> unlink -> unlink' }
                 gLog('err', error.message + ' -> ' + error.where)
@@ -165,8 +169,8 @@ jUser.saveFile = function (req, res, next) {
           res.status(200);
           const imgPath = '/uploads/img/' + file_name + '.' + file_ext
           const success = { 'success': true, 'imgPath': imgPath, 'imgId': file_name }
-          return res.json(success);
-          next()
+          res.json(success);
+          return next()
         });
       });
     });
@@ -183,12 +187,12 @@ jUser.deleteFile = function (req, res, next) {
     const boolFileExists = gFs.existsSync('.' + fileToDelete.filePath)
     if (boolFileExists) {
       gFs.unlink('.' + fileToDelete.filePath, (err) => {
-      if (err) {
-        gLog('err', err)
-        return false
-      }
-      return res.send(fileToDelete + ' was deleted')
-        next()
+        if (err) {
+          gLog('err', err)
+          return false
+        }
+        res.send(fileToDelete + ' was deleted')
+        return next()
       });
     } 
   } catch (error) {
@@ -208,9 +212,9 @@ jUser.getAllUsers = function (req, res, next) {
         gLog('err', error.message + ' -> ' + error.where)
         return res.send(jClientErr)
       }
-      gLog('ex', res.headersSent + ' getUsers function')
-      return res.send(ajRows)
-      next() // needed for auth headers
+      gLog('ex', res.headersSent + ' getAllUsers function')
+      res.send(ajRows)
+      return next() // needed for auth headers
   
     })
   } catch (error) {
@@ -263,28 +267,29 @@ jUser.logInUser = function(req, res, next) {
           admin: true
         };
 
-       const secret = jConfig.secret;
+        const secret = jConfig.secret;
         var token = jwt.sign(payload, secret, {
           expiresIn: "2h" // expires in 2 hours
         });
-       
-        
+        const iTokenExpires = Math.round((new Date()).getTime() / 1000) + 7200;
+    
         db.run('UPDATE Users SET online = ? WHERE Users.id = ?', [1, jRow.id], function (err) {
           if (err) {
-            console.log(err);
+            jError = {message: 'update User set online error: '+ err, where: 'update online status -> loginUser function'}
+            gLog('err', jError.message + ' -> ' + jError.where)
             return false
           }
         })
 
-        const jRes = { message: 'ok', response: jRow, token: token }
+        const jRes = { message: 'ok', response: jRow, token: token, tokenExpires: iTokenExpires }
         jUser.message = jRes
-        return res.json(jRes)
-        next()
+        res.json(jRes)
+        return next()
         gLog('ex', res.headersSent + ' after')
       } else {
         const jRes = { message: 'no match or user is not authenticated', response: jRow }
-        return res.status(500).json(jRes)
-        next()
+        res.status(500).json(jRes)
+        return next()
       }
     })
   } catch (error) {
@@ -300,11 +305,13 @@ jUser.logoutUser = function (req, res, next) {
     db.run('UPDATE Users SET online = ? WHERE Users.id = ?', [0, userId], function (err) {
       if (err) {
         console.log(err);
+        jError = { message: 'update user set ofline error: ' + err, where: 'update online status -> logoutUser function' }
+        gLog('err', jError.message + ' -> ' + jError.where)
         return res.status(500).send({ status: 'failed' })
       }
-     
-      return res.status(200).send({status:'ok', id: userId})
-      next()
+    
+      res.status(200).send({status:'ok', id: userId})
+      return next()
 
     })
   } catch (error) {
@@ -314,53 +321,58 @@ jUser.logoutUser = function (req, res, next) {
 }
 
 jUser.verifyUsers = function (req, res, next) {
+  gLog('ex', res.headersSent + ' verifyUsers function #2')
+  
   try {
     // check header or url parameters or post parameters for token
     const userId = req.query.userId
-    // console.log(userId);
+    // console.log('userId ',userId);
     const token = req.fields.token || req.query.token || req.headers['x-access-token']
     // decode token
     
     if (token) {
       // verifies secret and checks exp
+      
       jwt.verify(token, jConfig.secret, function (err, decoded) {
         if (err) {
           return res.status(500).json({ success: false, message: 'Failed to authenticate token.' })
         } else {
-          gLog('ex', res.headersSent + ' logout function')
+          gLog('ex', res.headersSent + ' verifyUsers function')
           req.token = token
           req.decoded = decoded
           req.userId = userId
           next() //needed for the auth process
         }
       });
-
+      return
     } else {
       // if there is no token
       return res.send({
         success: false,
         message: 'No token provided.'
       });
+    
     }
   } catch (error) {
     const err = { message: error.message, where: ' controllers/users.js -> verifyUsers function' }
-    gLog('err', err.message+ ' -> ' + err.where)
+    gLog('err', err.message + ' -> ' + err.where)
+ 
   }
 }
 
-jUser.saveUser = async function (req, res, next) {
+jUser.saveUser = function (req, res, next) {
   try {
     const code = random4Digit();
     const jUserData = req.fields
     const sjUserImg = jUserData.userImg
     const aParams = [jUserData.firstname, jUserData.lastname, jUserData.username, jUserData.email, jUserData.tel, jUserData.gender, jUserData.isSponsor, sjUserImg, jUserData.password, time_format, code]
     stmt = 'INSERT INTO Users (firstname, lastname, username, email, mobile, gender, sponsor, imgUrl, password, date, code ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    db.run(stmt, aParams, async function (err, data) { 
+    db.run(stmt, aParams, function (err, data) { 
       try {
         nodemailer.createTestAccount((err, account) => {
           if (err) {
             console.log(err)
-            return 
+            return false
           }
           let transporter = nodemailer.createTransport({
             host: 'mail.1984.is',
@@ -389,9 +401,10 @@ jUser.saveUser = async function (req, res, next) {
         })
         sendSmsData(req, res, [code, jUserData.firstname])
 
-        res.status(200)
+       
         const jSuccess = { status: 'ok', message: 'user: ' + jUserData.username + ' has been added' }
-        res.send(jSuccess)
+        res.status(200).send(jSuccess)
+        return next()
       } catch (error) {
         {
           const jErr = { status: 'failed', message: error.message, where: ' controllers/users.js -> saveUser function' }

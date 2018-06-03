@@ -25,11 +25,19 @@ export class SignupComponent implements OnInit, OnDestroy {
   value;
   value2;
   valuePass;
-
+  localImg: String;
   handleFileInput(files: FileList) {
     this.fileToUpload = files.item(0);
     // console.log(this.fileToUpload);
     // console.log(files);
+    if (files && files[0]) {
+      var reader = new FileReader();
+      reader.onload = (event: any) => {
+        // console.dir(event.target);
+        this.localImg = event.target.result;
+      }
+      reader.readAsDataURL(files[0]);
+    }
   }
 
   uploadFileToActivity(signinForm) {
@@ -48,7 +56,11 @@ export class SignupComponent implements OnInit, OnDestroy {
     } else {
       this.usersActions.saveUser(signinForm.value);
     }
-  
+  }
+  openFileBrowser(event: any, id: string) {
+    event.preventDefault();
+    let element: HTMLElement = document.getElementById(id) as HTMLElement;
+    element.click();
   }
 
 

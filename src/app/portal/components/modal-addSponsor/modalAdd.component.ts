@@ -15,7 +15,7 @@ import { AuthService } from '../../../auth.service';
 
 export class ModalAddComponent implements OnInit {
   @Input() data: User | any;
-  @Input() btnText;
+  @Input() btnText: String;
   
 
   constructor(private ngRedux: NgRedux<IAppState>, public dialog: MatDialog, private dataService: DataService) { 
@@ -23,7 +23,6 @@ export class ModalAddComponent implements OnInit {
   }
 
   openDialog(data): void {
-    console.log('x');
     
     let dialogRef = this.dialog.open(ModalAddOverlay, {
       width: '350px',
@@ -32,7 +31,7 @@ export class ModalAddComponent implements OnInit {
   }
 
   ngOnInit() {
-  
+   console.log(this.btnText);
   }
  
 }
@@ -59,9 +58,7 @@ export class ModalAddOverlay {
   }
 
   ask(userIdToAsk, userAsking) {
-    // redux action to delete user
-    // this.usersActions.updateUserByField(0, 'activated', userId);
-    // this.usersActions.getAllUsers(this.authService.isToken);
+ 
     this.usersActions.sendSponsor(userIdToAsk, userAsking, this.authService.isToken);
     this.dialogRef.close();
   }
