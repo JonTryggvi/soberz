@@ -5,12 +5,8 @@ import { IAppState } from './store/store';
 
 @Injectable()
 export class DataService {
-
   subscription;
-  // private dataSource = new BehaviorSubject<any>({});
-  // currentData = this.dataSource.asObservable();
   thisUser;
-
   serverPort = isDevMode() ? ':1983': '';
   // serverPort = '';
   
@@ -28,10 +24,7 @@ export class DataService {
     });
   }
 
-  // changeData(data: any, i) {
-  //   data.index = i;
-  //   this.dataSource.next(data);
-  // }
+
   static randomNumberId(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }

@@ -36,6 +36,16 @@ export class UsersActions {
   static SEND_SPONSORSHIP_REQUEST_ERROR: String = 'SEND_SPONSORSHIP_REQUEST_ERROR';
   static ACTIVE_USER: String = 'ACTIVE_USER';
   static INACTIVE_USER: String = 'INACTIVE_USER';
+  static GET_PENDING_SPONS_REQ: String = 'GET_PENDING_SPONS_REQ';
+  static GET_PENDING_SPONS_REQ_SUCCESS: String = 'GET_PENDING_SPONS_REQ_SUCCESS';
+  static GET_PENDING_SPONS_REQ_ERROR: String = 'GET_PENDING_SPONS_REQ_ERROR';
+
+  getPendingSponsor(pendingId, token) {
+    this.ngRedux.dispatch({
+      type: UsersActions.GET_PENDING_SPONS_REQ,
+      payload: { pendingId, token }
+    })
+  }
 
   sendSponsor(sponsorId, userId, token) {
     this.ngRedux.dispatch({

@@ -7,10 +7,31 @@ const INITIAL_STATE: UsersState = UsersService.getInitialUsersState();
 
 export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
   switch (action.type) {
-    case UsersActions.SEND_SPONSORSHIP_REQUEST:
+
+    case UsersActions.GET_PENDING_SPONS_REQ:
+      return state;
+    case UsersActions.GET_PENDING_SPONS_REQ_SUCCESS:
+      // work with state if epic is successfull 
+      let thePenders = action.payload.map((pender, i) => {
+        pender.date = Number(Math.round(pender.date));
+        pender.type = 'sponsor_request';
+        return pender;
+      })
+      let newStatePendSp = [...state.pendingSponceReq];
+       
+      let concatState = newStatePendSp.concat(thePenders);
+
+      return tassign(state, { pendingSponceReq: concatState });
+    
+    case UsersActions.GET_PENDING_SPONS_REQ_ERROR:
+      console.log(action.payload)  
+      // work with state if epic is unsuccessfull  
+      return state;  
+
+    case UsersActions.SEND_SPONSORSHIP_REQUEST: 
       return state;
     case UsersActions.SEND_SPONSORSHIP_REQUEST_SUCCESS:
-      console.log(action.payload);
+      // console.log(action.payload);
         
       return state;
     case UsersActions.SEND_SPONSORSHIP_REQUEST_ERROR:
@@ -23,8 +44,6 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       // console.log(state);
       let upDateUserState = [...state.soberUsers ]
       const jUserFromServer = action.payload.updatedData
-      console.log(jUserFromServer);
-      
       let userToUPdateState = upDateUserState.filter(x => {
         let changeNameFromServer = jUserFromServer.name;
         let changValueFromServer = jUserFromServer.value;
@@ -71,7 +90,6 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       return state;
     case UsersActions.LOG_IN_SUCCESS:
       let jPayload = action.payload;
-      console.log(jPayload);
       let loginState = { ...state }
       loginState.userId = Number(jPayload.response.id)
       loginState.userRole = jPayload.response.role_name;
@@ -84,7 +102,6 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
     case UsersActions.LOG_IN_FAILED:
       let newLogginFailed = { ...state };
       newLogginFailed.loggInSuccess = false;
-      console.log(action.payload);
       return tassign(state, newLogginFailed);
     
     case UsersActions.CHECK_TOKEN:
@@ -93,7 +110,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       // console.log(action.payload);
       let validState = { ...state };
       validState.validToken = action.payload.message;
-      console.log(action.payload.v.exp);
+      // console.log(action.payload.v.exp);
       validState.tokenExp = action.payload.v.exp;
       validState.userId = Number(action.payload.userId);
       validState.token = action.payload.token;
@@ -124,6 +141,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
         s.sponsors = JSON.parse(s.sponsors);
         s.sponsees = JSON.parse(s.sponsees);
         s.userImg = JSON.parse(s.userImg);
+        s.pending_spons_req = JSON.parse(s.pending_spons_req);
         return s;
       });
       // console.log(action.payload);
@@ -144,7 +162,7 @@ export function usersReducer(state: UsersState = INITIAL_STATE, action: any) {
       return tassign(state, { soberUsers: aActiveUserState});
     case UsersActions.INACTIVE_USER:
       let aInactiveState = [...state.soberUsers];
-      console.log(aInactiveState);
+      
       let inactiveUser = aInactiveState.filter(x => x.socketId && x.socketId === action.payload)[0];
       inactiveUser.socketId = '';
       inactiveUser.online = '0';

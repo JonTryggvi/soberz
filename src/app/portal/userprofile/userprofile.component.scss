@@ -125,3 +125,17 @@
   background-size: contain !important;
 }
 
+.sponsorRequest {
+  display: flex;
+  align-items: center;
+  background-color: tomato;
+  color: whitesmoke;
+  height: 24px;
+  position: absolute;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 3px;
+  mat-icon {
+    font-size: 20px;
+  }
+}

@@ -35,7 +35,6 @@ export class UsertableComponent implements OnInit, OnDestroy  {
     
   }
   
-
   ngOnInit() {
     this.loggedInUserId = this.dataService.thisUser.id;
     this.subscription = this.ngRedux.select(state => state.users).subscribe(users => {
@@ -44,7 +43,7 @@ export class UsertableComponent implements OnInit, OnDestroy  {
     
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    console.log(this.sort);
+    // console.log(this.sort);
     
   }
   applyFilter(filterValue: any) {
@@ -63,7 +62,7 @@ export class UsertableComponent implements OnInit, OnDestroy  {
   
 }
 export interface User {
-  online: string;
+  // online: string;
   firstname: string;
-  role: string;
+  // role: string;
 }

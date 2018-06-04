@@ -22,9 +22,7 @@ export class AppComponent implements OnInit {
   
   ngOnInit() {
     if (this.authService.isToken !== 'undefined') {
-     
-      console.log(this.authService.isUserIdValid);
-      
+      // console.log(this.authService.isUserIdValid);
       this.usersActions.checkToken(this.authService.isToken, this.authService.isUserIdValid);
     }
     this.ngRedux.select(state => state.users).subscribe(res => {

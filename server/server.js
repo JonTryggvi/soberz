@@ -85,13 +85,13 @@ if (!gFs.existsSync(dirImg)) {
 
 const fronEndRoutes = express.Router()
 app.use('/', fronEndRoutes)
-fronEndRoutes.get('/', function (req, res, next) {
+fronEndRoutes.get('/', function (req, res) {
 
   // return res.sendFile(__dirname + '/public/dist/index.html') 
   // return res.send('test')
   return res.redirect('http://localhost:4200')
   // res.sendFile(__dirname + '/public/dist/index.html') 
-  next()
+
 })
 
 //  ****************************************************************************************************
@@ -147,6 +147,11 @@ apiRoutes.get('/get-users', function (req, res, next) {
   users.getAllUsers(req, res, next)
 })
 
+apiRoutes.get('/get-sponsor-requests/:id', function (req, res, next) {
+  users.getSponsorReq(req, res, next);
+  
+})
+
 
 
 apiRoutes.get('/', function (req, res, next) {
@@ -168,10 +173,10 @@ io.on('connection', (socket) => {
   try {
     // console.log(socket.conn.server.clients)
     // console.log('user connected');
-    gLog('ext', 'user connected')
+    gLog('ex', 'user connected')
     socket.on('new-message', (message) => {
       // console.log(message)
-     return io.emit('new-message', message)
+      io.emit('new-message', message)
     })
     
     socket.on('userActive', function(activeUserId) {
@@ -180,17 +185,17 @@ io.on('connection', (socket) => {
         socketId: socket.id
       }
       console.log(socketInfo)
-      return io.emit('userActive', socketInfo)
+      io.emit('userActive', socketInfo)
     })
 
     socket.on('disconnect', function () {
       console.log(socket.id + ' disconnected')
-      return io.emit('disconnected', socket.id);
+      io.emit('disconnected', socket.id);
     })
 
 
   } catch (error) {
-    gLog('err', 'Would not connect to socket: '+ error.message)
+    gLog('err', 'Could not connect to socket: '+ error.message)
   }
 
 

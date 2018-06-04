@@ -41,6 +41,8 @@ export class ChatService {
   }
   userDisconnected = () => {
     return Observable.create((observer) => {
+      console.log(this.socket);
+      
       this.socket.on('disconnected', sockedId => {
 
         observer.next(sockedId);
