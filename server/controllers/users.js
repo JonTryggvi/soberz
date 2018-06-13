@@ -203,7 +203,7 @@ jUser.deleteFile = function (req, res, next) {
 
 jUser.getAllUsers = function (req, res, next) {
   try {
-    const stmt = "SELECT about, json_extract(a.imgUrl, '$') AS userImg, json_extract(a.sponsors, '$') AS sponsors, json_extract(a.sponsees, '$') AS sponsees, a.id, a.email, a.firstname, a.lastname, a.mobile, a.sponsor, a.username, a.online, a.activated, b.gender_name AS gender, c.role_name AS role FROM Users AS a INNER JOIN genders  AS b ON (a.gender = b.id) INNER JOIN user_roles AS c ON (a.user_role = c.role_id) WHERE a.activated = 1"
+    const stmt = "SELECT about, json_extract(a.imgUrl, '$') AS userImg, json_extract(a.sponsors, '$') AS sponsors, json_extract(a.sponsees, '$') AS sponsees, json_extract(a.pending_sponsor_request, '$') AS pending_spons_req, a.id, a.email, a.firstname, a.lastname, a.mobile, a.sponsor, a.username, a.online, a.activated, b.gender_name AS gender, c.role_name AS role FROM Users AS a INNER JOIN genders  AS b ON (a.gender = b.id) INNER JOIN user_roles AS c ON (a.user_role = c.role_id) WHERE a.activated = 1"
     db.all(stmt, function (err, ajRows) {
       if (err) {
         const jError = { message: 'could not read from database', error: err }
@@ -341,16 +341,18 @@ jUser.verifyUsers = function (req, res, next) {
           req.token = token
           req.decoded = decoded
           req.userId = userId
-          next() //needed for the auth process
+          next()
         }
-      });
-      return
+      })
+      // res.status(200).send({ status: 'ok' })
+      // return next() //needed for the auth process
+      
     } else {
       // if there is no token
       return res.send({
         success: false,
         message: 'No token provided.'
-      });
+      })
     
     }
   } catch (error) {
@@ -457,6 +459,26 @@ jUser.saveSponceRequest = function (req, res) {
     return
   } catch (error) {
     const err = { message: error.message, where: ' controllers/users.js -> saveSponceRequest function' }
+    gLog('err', err.message + ' -> ' + err.where)
+  }
+}
+
+jUser.getSponsorReq = function (req, res, next) {
+  try {
+    const requestId = req.params.id
+    const stmt = 'SELECT date, who_is_asked AS toUserId, who_is_asking AS fromUserId, accepted FROM sponsor_inquiries WHERE toUserId = ?'
+    db.all(stmt, requestId, function (err, dbData) {
+      if (err) {
+        const jError = { error: err, message: 'the SELECT * FROM sponsor_inquiries query failed', where: ' controllers/users.js -> getSponsorReq function'}
+        gLog('err', jError.error + ' -> ' + jError.message + ' -> ' + jError.where);
+        res.status(500).send(jError)
+        return next()
+      }
+      res.status(200).send(dbData)
+      return next()
+    })
+  } catch (error) {
+    const err = { message: error.message, where: ' controllers/users.js -> getSponsorReq function' }
     gLog('err', err.message + ' -> ' + err.where)
   }
 }

@@ -15,7 +15,7 @@
                 <button mat-button class="btnEditProfile" color="warning" (click)="editUser(true, 'imgUrl')">
                   <mat-icon class="editIcon" color="primary">edit</mat-icon>
                 </button>
-                <!-- <button (click)="testHttp()">test http</button> -->
+              
               </div>
               <div class="imgInput" *ngIf="imgEditMode">
                 <img *ngIf="serverPath + profileImg" [src]="localImg ? localImg : serverPath + profileImg" alt="">
@@ -31,6 +31,7 @@
                   </mat-icon>
                 </button>
               </div>
+              
             </mat-card>
             <mat-card class="userInfo double">
               <mat-card-header *ngIf="!firstNameEditMode">
@@ -262,6 +263,13 @@
           </div>
           
         </mat-tab>
+        <mat-tab label="notifications">
+          <ng-template mat-tab-label>
+            <mat-icon>mail</mat-icon>
+          </ng-template>
+         
+          <app-inbox [notifiers]="notifiers"></app-inbox>
+        </mat-tab>
       </mat-tab-group>
     </mat-card-content>
   </mat-card>
@@ -272,6 +280,7 @@
       <mat-card-header>
         <img mat-card-avatar *ngIf="serverPath + profileImg" [src]="localImg ? localImg : serverPath + profileImg" alt="">
         <mat-card-title>{{profileUser.firstname}} {{profileUser.lastname}}</mat-card-title>
+        <mat-card-content *ngIf="userSponsRequests && userSponsRequests.length > 0"><span class="sponsorRequest"><mat-icon>tag_faces</mat-icon>{{userSponsRequests.length}}</span></mat-card-content>
       </mat-card-header>
     </mat-card>
 

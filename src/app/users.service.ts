@@ -11,7 +11,14 @@ import { UsersState } from './store/store';
 export class UsersService {
   
   constructor(private authService: AuthService, private http: HttpClient, private dataService: DataService) { }
-
+  httpOptions(token) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'x-access-token': token
+      })
+    };
+    return httpOptions;
+   };
   sendSponsorshipRequest(payload) {
     console.log(payload);
     
@@ -44,13 +51,8 @@ export class UsersService {
   usCheckToken(token, userId: number) {
 
     if (token !== '') {
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'x-access-token': token
-        })
-      };
-
-      return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api?userId='+ userId, httpOptions);
+      // Using the '?' opperator in the url because I am just sending to hte api/ path not a dedicaded express rout expectiong a :id
+      return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api?userId=' + userId, this.httpOptions(token));
     } else {
       return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api', { responseType: 'json' });
     }
@@ -59,12 +61,8 @@ export class UsersService {
 
   getAllUsersApi(token) {
     // console.log(token);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'x-access-token': token
-      })
-    };
-    return this.http.get(this.dataService.serverPath + this.dataService.serverPort +'/api/get-users', httpOptions);
+    
+    return this.http.get(this.dataService.serverPath + this.dataService.serverPort + '/api/get-users', this.httpOptions(token));
   }
   
 
@@ -78,6 +76,14 @@ export class UsersService {
     let url = `http://apilayer.net/api/validate?access_key=${key}&number=${mobileNumber}&country_code=DK`;
     return this.http.get(url).map(res =>res)
   }
+
+  getPendingSponsReq(id, token) {
+    if (token === '') {
+      return undefined;
+    }
+    let getUrl = this.dataService.serverPath + this.dataService.serverPort + '/api/get-sponsor-requests/' + id;
+    return this.http.get(getUrl, this.httpOptions(token));
+  }
   
   static getInitialUsersState(): UsersState {
     return {
@@ -89,10 +95,9 @@ export class UsersService {
       activated: 0,
       soberUsers: [],
       loggInSuccess: undefined,
-      online: '0'
+      online: '0',
+      pendingSponceReq: []
     };
   }
   
 }
-
-

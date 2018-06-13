@@ -31,7 +31,7 @@ export class ModalAddComponent implements OnInit {
   }
 
   ngOnInit() {
-   console.log(this.btnText);
+  //  console.log(this.btnText);
   }
  
 }

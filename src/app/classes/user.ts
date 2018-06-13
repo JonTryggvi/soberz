@@ -1,4 +1,5 @@
 import { Gender } from "./gender";
+import { sponseReqNotifications } from "./notifycations";
 
 export class User {
   public id: number;
@@ -17,4 +18,5 @@ export class User {
   public online: String;
   public activated: String;
   public socketId: String;
+  public pendingSponceReq: sponseReqNotifications[];
 }

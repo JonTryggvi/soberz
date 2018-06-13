@@ -10,10 +10,10 @@ export class FilterUsersPipe implements PipeTransform {
     let type: string;
     switch (x.sponsor) {
       case 1:
-        type = 'sponsor'
+        type = ' sponsor '
         break;
       case 0:
-        type = 'sponsee'
+        type = ' sponsee '
       break  
       default:
         break;

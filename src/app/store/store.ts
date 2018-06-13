@@ -2,6 +2,7 @@ import { routerReducer } from '@angular-redux/router';
 import { combineReducers } from 'redux';
 import { User } from '../classes/user';
 import { usersReducer } from './../users.reducer';
+import { sponseReqNotifications } from '../classes/notifycations';
 
 export class UsersState {
   userId: number;
@@ -13,6 +14,7 @@ export class UsersState {
   soberUsers: User[];
   loggInSuccess: boolean;
   online: String;
+  pendingSponceReq: sponseReqNotifications[];
 }
 export class IAppState {
   users?: UsersState;

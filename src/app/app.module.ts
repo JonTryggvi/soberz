@@ -34,6 +34,7 @@ import { ModalAddComponent, ModalAddOverlay } from './portal/components/modal-ad
 import { NewDemoComponent } from './home/new-demo/new-demo.component';
 import { FilterUsersPipe } from './portal/userprofile/filter-users.pipe';
 import { ModalUserComponent, ModalUserOverlay } from './portal/components/modal-user/modal-user.component';
+import { InboxComponent } from './portal/userprofile/inbox/inbox.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +55,8 @@ import { ModalUserComponent, ModalUserOverlay } from './portal/components/modal-
     NewDemoComponent,
     FilterUsersPipe,
     ModalUserComponent,
-    ModalUserOverlay
+    ModalUserOverlay,
+    InboxComponent
   ],
   imports: [
     BrowserModule,
@@ -85,11 +87,9 @@ export class AppModule {
       this.usersEpic.saveUser,
       this.usersEpic.updateUserByFieldName,
       this.usersEpic.sendSponsorRequest,
-      this.usersEpic.logoutUser
-      // this.usersEpic.deleteUser,
-      // this.usersEpic.createUser,
-      // this.usersEpic.rateSitter
-      // Each epic is referenced here.
+      this.usersEpic.logoutUser,
+      this.usersEpic.getSponsorPending
+    
     );
     const middleware = [
       createEpicMiddleware(rootEpic), createLogger({ level: 'info', collapsed: true })

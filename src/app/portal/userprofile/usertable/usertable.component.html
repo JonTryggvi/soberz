@@ -6,38 +6,38 @@
 <mat-table class="" [dataSource]="dataSource" matSort>
 
   <ng-container matColumnDef="online">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-    <mat-cell *matCellDef="let user "><span class="userStatus {{user.online=='1'?'online':'offline'}}"></span></mat-cell>
+    <mat-header-cell *matHeaderCellDef >Status</mat-header-cell>
+    <mat-cell *matCellDef="let user"><span class="userStatus {{user.online=='1'?'online':'offline'}}"></span></mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="firstname">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>name</mat-header-cell>
-    <mat-cell class="description-cell" *matCellDef="let user  "><app-modal-user [data]="user" [btnText]="user.firstname"></app-modal-user></mat-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+    <mat-cell class="description-cell" *matCellDef="let user"><app-modal-user [data]="user" [btnText]="user.firstname"></app-modal-user></mat-cell>
     
   </ng-container>
  
 
   <ng-container matColumnDef="role" >
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Role</mat-header-cell>
-    <mat-cell class="duration-cell" *matCellDef="let user ">{{user.role}}</mat-cell>
+    <mat-header-cell *matHeaderCellDef >Role</mat-header-cell>
+    <mat-cell class="duration-cell" *matCellDef="let user">{{user.role}}</mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="addsponsor">
     <mat-header-cell *matHeaderCellDef>Ask to be your sponsor</mat-header-cell>
-    <mat-cell class="duration-cell" *matCellDef="let user ">
+    <mat-cell class="duration-cell" *matCellDef="let user">
       <add-sponsor-modal *ngIf="user.sponsor && user.id !== loggedInUserId" [data]="user" [btnText]="ask"></add-sponsor-modal>
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="deleteuser" >
     <mat-header-cell *matHeaderCellDef >Delete user</mat-header-cell>
-     <!-- (click)="userData(user, i)" -->
-    <mat-cell class="delete-cell" *matCellDef="let user; let i = index"><app-modal [data]="user" [btnText]=""></app-modal></mat-cell>
+
+    <mat-cell class="delete-cell" *matCellDef="let user"><app-modal [data]="user" [btnText]=""></app-modal></mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="setadmin">
     <mat-header-cell *matHeaderCellDef>Set user as admin</mat-header-cell>
-    <!-- (click)="userData(user, i)" -->
+   
     <mat-cell class="setRole-cell" *matCellDef="let user">
       <mat-slide-toggle [checked]="user.role == 'Admin' ? true : false" (change)="setUserRole($event, user.id)"></mat-slide-toggle>
     </mat-cell>
@@ -45,7 +45,7 @@
   
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
  
-  <mat-row *matRowDef="let row; let i = index; columns: displayedColumns"></mat-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 
 </mat-table>
 <mat-paginator  *ngIf="userCount > 5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
