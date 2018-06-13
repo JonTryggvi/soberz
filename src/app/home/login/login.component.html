@@ -15,7 +15,7 @@
           <form [formGroup]="loginForm" class="container" (submit)="onSubmit(loginForm)">
           
             <mat-form-field>
-              <input matInput placeholder="Enter your email or mobile nr." formControlName="user" [(ngModel)]="value" value="jontryggvi@jontryggvi.is"
+              <input matInput placeholder="Enter your email or mobile nr." formControlName="user" [(ngModel)]="value" value=""
                 required>
               <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
                 <mat-icon>close</mat-icon>
@@ -23,7 +23,7 @@
               <mat-error *ngIf="loginForm.controls.user.invalid">{{getErrorMessage()}}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <input type="password" matInput placeholder="Enter your password" formControlName="password" [(ngModel)]="valuePass" value="123#$%"
+              <input type="password" matInput placeholder="Enter your password" formControlName="password" [(ngModel)]="valuePass" value=""
                 required>
               <button mat-button *ngIf="valuePass" matSuffix mat-icon-button aria-label="Clear" (click)="valuePass=''">
                 <mat-icon>close</mat-icon>
